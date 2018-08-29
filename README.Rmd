@@ -23,5 +23,7 @@ The goal of maiaR is to make workflow with MAIA easier. Importing from MAIA raw 
 This is a basic example which shows you how to import from your raw files:
 
 ```{r example}
-getMAIA
+#save the tgz files from MAIA into your R working directory 
+# library(maiaR)
+# getMAIA()
 ```
