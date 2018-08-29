@@ -4,14 +4,15 @@ Title: MAIA (Macular integrity assessment)
 Version: 0.1.0
 Author: Tjebo Heeren and Maximilian Pfau
 Maintainer: Tjebo Heeren <tjebn@web.de>
-Description: This package will help you to extract data from the MAIA raw files.
-    It will help to do visual field analysis and visualisation. 
+Description: This package will help you work with MAIA. 
+    It can extract data from MAIA raw files in a breeze.
+    It allows for microperimetry basic and advanced visual field analysis and some visualisation. 
 Depends: tidyverse
 Imports: 
   lubridate,
   utils
 Suggested: jsonlite
-License: What license is it under?
+License: GNU General Public License v3.0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.0
