@@ -1,0 +1,27 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# maiaR
+
+The goal of maiaR is to make workflow with MAIA easier. Importing from MAIA raw export files in a breeze. Creation of simple summarising visual fields indices and creation of more complex figures such as cumulative defect curves. 
+
+## Example
+
+This is a basic example which shows you how to import from your raw files:
+
+```{r example}
+getMAIA
+```

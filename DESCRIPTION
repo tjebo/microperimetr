@@ -1,0 +1,17 @@
+Package: maiaR
+Type: Package
+Title: MAIA (Macular integrity assessment)
+Version: 0.1.0
+Author: Tjebo Heeren and Maximilian Pfau
+Maintainer: Tjebo Heeren <tjebn@web.de>
+Description: This package will help you to extract data from the MAIA raw files.
+    It will help to do visual field analysis and visualisation. 
+Depends: tidyverse
+Imports: 
+  lubridate,
+  utils
+Suggested: jsonlite
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.0
