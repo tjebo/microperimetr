@@ -7,7 +7,6 @@
 #' @param folder source folder which is searched for .tgz files. Default: workdirectory
 #' @param show_incomplete set TRUE, if you want to see incomplete exams too
 #' @param show_examDate default = FALSE
-#'
 #' @return Data frame
 #'
 #' @import tidyverse
@@ -18,6 +17,9 @@ getMAIA <- function(folder = getwd(), show_incomplete = FALSE, show_examDate = F
 
   tgz_name <-  list.files(folder)[grepl('.tgz',list.files())] #list of tgz files
 
+  if(identical(tgz_name, character(0))) {
+   stop('No tgz file in the specified directory')
+ }
   pull_out <- function(tgz_element)  {
   #tgz_element is element of tgz_name (each tgz file), and pull_out will be used with lapply to perform the whole lot on every tgz file
 
