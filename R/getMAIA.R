@@ -13,7 +13,7 @@
 #'
 #' @export
 
-getMAIA <- function(folder = getwd(), show_incomplete = FALSE, show_examDate = FALSE){
+getMaia <- function(folder = getwd(), show_incomplete = FALSE, show_examDate = FALSE){
 
   tgz_name <-  list.files(folder)[grepl('.tgz',list.files())] #list of tgz files
 

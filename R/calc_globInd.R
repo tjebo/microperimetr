@@ -13,7 +13,7 @@
 #' @export
 
 
-calc_globInd<- function (df, test_val, norm_val, var_norm) {
+calc_globInd <- function (df, test_val, norm_val, var_norm) {
 
   test_val_sub <- deparse(substitute(test_val))
   norm_val_sub <- deparse(substitute(norm_val))
