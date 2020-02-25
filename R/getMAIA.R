@@ -1,3 +1,4 @@
+#' getMaia
 #' Extract MAIA raw data
 #'
 #' The function will extract the data from the raw .tgz output of your MAIA.
@@ -5,15 +6,17 @@
 #' @author Tjebo
 #'
 #' @param folder source folder which is searched for .tgz files. Default: workdirectory
-#' @param show_incomplete set TRUE, if you want to see incomplete exams too
-#' @param show_examDate default = FALSE
+#' @param incomplete set TRUE, if you want to see incomplete exams too
+#' @param timeclass either 'date' (date class) or 'datetime' (POSIXct class), for date and time of test
 #' @return Data frame
-#'
-#' @import tidyverse
 #'
 #' @export
 
-getMaia <- function(folder = getwd(), show_incomplete = FALSE, show_examDate = FALSE){
+getMaia <- function(folder = getwd(), incomplete = FALSE, timeclass = 'datetime'){
+  using('xml2', 'lubridate','utils', 'tidyverse')
+  #if(!require('xml2')) stop('Please install the xml2 package')
+  #if(!require('utils')) stop('Please install the utils package')
+  #if(!require('lubridate'))  stop('Please install the lubridate package')
 
   tgz_name <-  list.files(folder)[grepl('.tgz',list.files())] #list of tgz files
 
@@ -71,7 +74,7 @@ getMaia <- function(folder = getwd(), show_incomplete = FALSE, show_examDate = F
       xml_df <- cbind(attribute_df, stimuli_df)
       row.names(xml_df) <- NULL
 
-        if(show_incomplete == FALSE) {
+        if(incomplete == FALSE) {
         xml_df <- xml_df %>% filter(Completed == 1) %>% select(-Completed)
       }
     } ## end of function to loop through xml_projection_list
@@ -108,9 +111,9 @@ data_all <- data_all %>%
   mutate(examType = coalesce(type, examType)) %>%
   select(-type)
 
-if(show_examDate == FALSE){
-  data_all <- data_all %>% select(-examDate)
-} else if (show_examDate == TRUE){
+if(timeclass == 'date'){
+  data_all <- data_all %>% mutate(examDate = lubridate::as_date(lubridate::ymd_hm(examDate)))
+} else if (timeclass == 'datetime'){
   data_all <- data_all %>% mutate(examDate = lubridate::ymd_hm(examDate))
 }
  data_all

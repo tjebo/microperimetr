@@ -2,16 +2,17 @@
 % Please edit documentation in R/getMAIA.R
 \name{getMaia}
 \alias{getMaia}
-\title{Extract MAIA raw data}
+\title{getMaia
+Extract MAIA raw data}
 \usage{
-getMaia(folder = getwd(), show_incomplete = FALSE, show_examDate = FALSE)
+getMaia(folder = getwd(), incomplete = FALSE, timeclass = "datetime")
 }
 \arguments{
 \item{folder}{source folder which is searched for .tgz files. Default: workdirectory}
 
-\item{show_incomplete}{set TRUE, if you want to see incomplete exams too}
+\item{incomplete}{set TRUE, if you want to see incomplete exams too}
 
-\item{show_examDate}{default = FALSE}
+\item{timeclass}{either 'date' (date class) or 'datetime' (POSIXct class), for date and time of test}
 }
 \value{
 Data frame

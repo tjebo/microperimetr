@@ -8,10 +8,7 @@ Description: This package will help you work with MAIA.
     It can extract data from MAIA raw files in a breeze.
     It allows for microperimetry basic and advanced visual field analysis and some visualisation. 
 Depends: tidyverse
-Imports: 
-  lubridate,
-  utils
-Suggested: jsonlite
+Suggested: jsonlite, lubridate, xml2, utils
 License: GNU General Public License v3.0
 Encoding: UTF-8
 LazyData: true
