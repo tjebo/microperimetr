@@ -4,8 +4,7 @@
 \alias{getMaia}
 \title{Extract MAIA raw data}
 \usage{
-getMaia(folder = getwd(), show_incomplete = FALSE,
-  show_examDate = FALSE)
+getMaia(folder = getwd(), show_incomplete = FALSE, show_examDate = FALSE)
 }
 \arguments{
 \item{folder}{source folder which is searched for .tgz files. Default: workdirectory}

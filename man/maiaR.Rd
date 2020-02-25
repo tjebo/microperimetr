@@ -3,7 +3,6 @@
 \docType{package}
 \name{maiaR}
 \alias{maiaR}
-\alias{maiaR-package}
 \title{maiaR}
 \description{
 For working with MAIA raw data
