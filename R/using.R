@@ -2,6 +2,7 @@
 #' @description internal function for test of package presence.
 #' @source https://stackoverflow.com/a/44660688/7941188
 #' @author SO user Matthew https://stackoverflow.com/users/4125693/matthew
+#'
 using <- function(...) {
   libs <- unlist(list(...))
   req <- unlist(lapply(libs, require, character.only = TRUE))

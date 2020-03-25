@@ -1,7 +1,7 @@
 Package: maiaR
 Type: Package
 Title: MAIA (Macular integrity assessment)
-Version: 0.1.0
+Version: 0.9.0
 Author: Tjebo Heeren and Maximilian Pfau
 Maintainer: Tjebo Heeren <tjebn@web.de>
 Description: This package will help you work with MAIA. 

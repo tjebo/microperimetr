@@ -1,96 +1,25 @@
 
 #libraries
 library(reshape2)
-
-library(lme4)
 library(sjPlot)
-
-library(tidyverse)
-library(ggplot2)
 library(cowplot)
-
-data("norm_data_pfau")
-#  putting test and retest in two columns
-# data(non-pooled)reshaping (long to wide) for icc or kendall calculation
-data_reshaped <- norm_data_pfau %>%
-  mutate(testnumber = paste0("E", testnumber)) %>%
-  pivot_wider(names_from = 'testnumber', values_from = 'value')
-########
-# Plot #
-########
-
-#Coefficient of Repeatability = 1.96*sqrt(2)*sqrt(within-subject-variance)
-#Please note, the "within-subject variance" from the anova is equal to the residual variance in the mixed-effect model
-#fit <- aov(value~position+Error(Patient.ID/position), data=data_for_model)
-#lmm_test <- lmer(value ~ position + (1|Patient.ID/position), data=data_for_model, REML = FALSE)
-
-data_for_model <- gather(data_reshaped, testrun, value, E1:E2)
-data_for_model$Patient.ID <- as.factor(data_for_model$Patient.ID)
-data_for_model$eccent <- as.factor(data_for_model$eccent)
-data_for_model$testrun <- as.factor(data_for_model$testrun)
-
-data_for_model$pp <- ifelse(is.na(data_for_model$Lens)|data_for_model$Lens!="pp", "Phakic", "Pseudophakic")
-
-data_for_model$testtype <- ordered(data_for_model$testtype, levels = c("Mesopic", "Cyan", "Red", "CRdiff"))
-
-ggplot(data_for_model, aes(x=Age, y=value)) + geom_point(aes(x=Age, y=value, shape=pp), alpha = 1/20) + facet_wrap(~ testtype) + ylab('Sensitivity [dB]') + xlab('Age [years]') + geom_smooth(aes(color=testtype), method=lm) + scale_color_manual(values=c("#009E73", "#56B4E9", "#D55E00", "#CC79A7")) + theme(legend.position="none")
+library(tidyverse)
 
 
+# Coefficient of repeatability ----
+# CoR = 1.96*sqrt(2)*sqrt(within-subject-variance)
+# Please note, the "within-subject variance" from the anova is equal to the residual variance in the mixed-effect model
+# fit <- aov(value~position+Error(Patient.ID/position), data=data_for_model)
+# lmm_test <- lme4::lmer(value ~ position + (1|Patient.ID/position), data=data_for_model, REML = FALSE)
 
-
-
-###########################
-# generating centile data #
-###########################
-
-newdata <- data.frame(Age=77)
-
-results <- NULL
-predictions <- NULL
-position <- NULL
-testtype <- NULL
-
-for(j in levels(data_reshaped$testtype)) {
-
-  sub_dat <- subset(data_reshaped, testtype == j)
-  sub_dat$MeanSens <- (sub_dat$E1 + sub_dat$E2)/2
-  sub_dat$position <- paste0(sub_dat$eccent, '_', sub_dat$angle)
-  sub_dat$position <- as.factor(sub_dat$position)
-
-  for(i in levels(sub_dat$position)) {
-    lm_age <- lm(MeanSens ~ Age, data = subset(sub_dat, position == i))
-    predictions <- rbind(predictions, predict(lm_age, newdata = newdata, interval = 'prediction'))
-    position <- append(position, i)
-    testtype <- append(testtype, j)
-
-  }
-}
-
-
-results <- data.frame(testtype, position, predictions)
-
-#convert 95% CI to 90% CI
-results$sd <- abs((results$lwr-results$fit)/1.96)
-results$lwr <- results$fit-1.64*results$sd
-results$upr <- results$fit+1.64*results$sd
-
-#remove <0 dB
-results_temp <- subset(results, testtype!="CRdiff")
-results_temp$fit <- ifelse(results_temp$fit<=0, 0, results_temp$fit)
-results_temp$lwr <- ifelse(results_temp$lwr<=0, 0, results_temp$lwr)
-results <- rbind(results_temp, subset(results, testtype=="CRdiff"))
-results_temp <- NULL
-
-results  <- cbind(results,  colsplit(results$position, "_", c("eccent", "angle")))
-results$eccent <- gsub("X", "", results$eccent)
-results$angle <- as.numeric(results$angle)
-results$eccent <- as.numeric(results$eccent)
-
-#results$fit <- ifelse(results$fit<0, 0, results$fit)
-#$lwr <- ifelse(results$lwr<0, 0, results$lwr)
-
-write.table(results, "grid_norm_data.csv", sep=";", row.names=FALSE, col.names=TRUE)
-
+## Example for plotting regression lines for normal data
+ggplot(norm_data_pfau, aes(x = Age, y = value)) +
+  geom_point(aes(x = Age, y = value, shape = lens), alpha = 0.05, show.legend = FALSE) +
+  facet_wrap(~ testtype) +
+  ylab("Sensitivity [dB]") +
+  xlab("Age [years]") +
+  geom_smooth(aes(color = testtype, linetype = lens), method = 'lm', formula = y ~ x) +
+  scale_color_manual(name = 'Regression lines', values = maia_palette)
 
 
 

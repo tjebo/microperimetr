@@ -1,7 +1,7 @@
-#' getMaia
+#' read_maia
 #' Extract MAIA raw data
 #'
-#' The function will extract the data from the raw .tgz output of your MAIA.
+#' The function will extract the anonymised data from the raw .tgz output of your MAIA.
 #'
 #' @author Tjebo
 #'
@@ -12,13 +12,10 @@
 #'
 #' @export
 
-getMaia <- function(folder = getwd(), incomplete = FALSE, timeclass = 'datetime'){
-  using('xml2', 'lubridate','utils', 'tidyverse')
-  #if(!require('xml2')) stop('Please install the xml2 package')
-  #if(!require('utils')) stop('Please install the utils package')
-  #if(!require('lubridate'))  stop('Please install the lubridate package')
+read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = 'datetime'){
+  maiaR:::using('xml2', 'lubridate','utils', 'tidyverse')
 
-  tgz_name <-  list.files(folder)[grepl('.tgz',list.files())] #list of tgz files
+  tgz_name <-  file.path(folder, list.files(folder)[grepl('.tgz',list.files(folder))]) #list of tgz files
 
   if(identical(tgz_name, character(0))) {
    stop('No tgz file in the specified directory')
@@ -119,5 +116,3 @@ if(timeclass == 'date'){
  data_all
 
 }
-
-
