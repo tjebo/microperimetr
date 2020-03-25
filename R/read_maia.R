@@ -101,7 +101,7 @@ data_all <- data_all %>%
                               examType == '7' ~ 'red',
                               TRUE ~ examType))
 data_all <- data_all %>%
-  filter(!examType %in% "2") %>%
+  #filter(!examType %in% "2") %>%
   distinct(patID, examID, examType) %>%
   rename(type = examType) %>%
   left_join(data_all, ., by = c("patID", "baseID" = "examID")) %>%
