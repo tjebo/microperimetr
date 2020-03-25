@@ -9,7 +9,7 @@
 #' @param incomplete set TRUE, if you want to see incomplete exams too
 #' @param timeclass either 'date' (date class) or 'datetime' (POSIXct class), for date and time of test
 #' @return Data frame
-#'
+#' @example read_maia(folder = file.path(getwd(),'norm_raw'))
 #' @export
 
 read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = 'datetime'){
