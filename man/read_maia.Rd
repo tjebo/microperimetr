@@ -20,6 +20,9 @@ Data frame
 \description{
 The function will extract the anonymised data from the raw .tgz output of your MAIA.
 }
+\examples{
+read_maia(folder = file.path(getwd(),'norm_raw'))
+}
 \author{
 Tjebo
 }
