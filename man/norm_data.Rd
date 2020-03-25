@@ -4,7 +4,9 @@
 \name{norm_data}
 \alias{norm_data}
 \title{Norm data}
-\format{A data frame with \Sexpr{nrow(maiaR::norm_data)} rows and NN variables:}
+\format{
+A data frame with \Sexpr{nrow(maiaR::norm_data)} rows and NN variables:
+}
 \source{
 University Eye Hospital Bonn. Collected by Maximilian Pfau
 }

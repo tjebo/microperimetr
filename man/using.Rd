@@ -2,7 +2,7 @@
 % Please edit documentation in R/using.R
 \name{using}
 \alias{using}
-\title{#' using}
+\title{using}
 \source{
 https://stackoverflow.com/a/44660688/7941188
 }
