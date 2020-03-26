@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_stats.R
 \name{CoR_maia}
 \alias{CoR_maia}
-\title{Coefficient of repeatability}
+\title{CoR_maia}
 \usage{
 CoR_maia(graph = TRUE)
 }
@@ -15,7 +15,7 @@ and plot if graph = TRUE
 }
 \description{
 Coefficient of repeatability of norm data
-Calculated with formula CoR = 1.96*sqrt(2)* sqrt(within-subject-variance)
+Calculated with formula \eqn{CoR = 1.96* \sqrt2*\sqrt(within-subject-variance)}
 }
 \author{
 tjebo

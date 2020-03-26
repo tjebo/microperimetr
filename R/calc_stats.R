@@ -1,5 +1,6 @@
 #' pred_location
 #'
+#' @name pred_location
 #' @author tjebo
 #'
 #' @description location based prediction of retinal sensitivity using a linear model for each location with age, sex and lens status as covariates
@@ -39,9 +40,98 @@ pred_location <- function(age, sex, lens = 'natural', interval = 'confidence'){
   return(results)
 }
 
-#' Coefficient of repeatability
+#' interpolate_norm
+#' @name interpolate_norm
+#' @description Interpolates grid based on local predictions of normal data.
+#'
+#' @author tjebo and max
+#' @param age required age of individual to be predicted
+#' @param sex required sex of individual to be predicted
+#' @param lens lens status. must be either 'natural' (default) or 'pseudo'
+#' @param interval used in [stats::predict.lm()]
+#' @param as_df FALSE (default): list of data frames will be returnedif TRUE, value of data frame will be returned.
+#' @param grid_density resolution of interpolated grid in degress.
+#' @param graph if TRUE, the interpolation will be plotted for all test types
+#'
+#' @return List of data frames with predicted results for grid for all test types
+#' and plot if graph = TRUE
+#' # Tests were performed
+#'  plot(gstat::variogramLine(fit_fit, 10), type='l')
+#'  points(vario[,2:3], pch=20, col='red')
+#' LOOCV of data points from interpol_dat data
+#' x <- gstat::krige.cv(fit ~ 1, interpol_dat, interpol_dat, model = fit_fit, nfold = nrow(interpol_dat))
+#' RMSE(x$var1.pred,x$observed)
+#' vgm.fit
+#' plot(vgm, vgm.fit)
+#' sp::spplot(mes_ok_mean ["var1.pred"])
+#' @export
+#'
+interpolate_norm <- function(age, sex, lens = 'natural', interval = 'confidence', as_df = FALSE, grid_density = 0.2, graph = FALSE){
+  maiaR:::using('tidyverse', 'gstat', 'sp')
+  if(!lens%in% c('natural','pseudo')) stop('lens needs to be either \'natural\' or \'pseudo\')')
+  if(!sex%in% c('m','f')) stop('sex needs to be either \'m\' or \'f\')')
+  #x - y coordinates
+  results <- pred_location(age = age, sex = sex, lens = lens, interval = interval) %>%
+    mutate(
+      angle = as.integer(angle),
+      x = cos(angle * pi / 180) * as.numeric(eccent),
+      y = sin(angle * pi / 180) * as.numeric(eccent)
+    )
+
+  # create grid
+  dense_grid <- expand.grid(x = seq(-10, 10, by = grid_density), y = seq(-10, 10, by = grid_density)) %>%
+    mutate(eccent = sqrt(x^2 + y^2))
+  sp_grid <- dense_grid
+  sp::coordinates(sp_grid) <- ~ x + y
+  sp::gridded(sp_grid) <- TRUE
+
+  list_res <- results %>% split(results$testtype)
+
+  interpolate_predictions <- function(x){
+    interpol_dat <- x %>% select(x, y, fit, lwr)
+    sp::coordinates(interpol_dat) <- ~ x + y
+    # fit with inverted distance weighting
+    gstat_obj <- gstat::gstat(formula = fit ~ 1, data = interpol_dat)
+    vario <- gstat::variogram(gstat_obj)
+    # vgm fitting with set of models, returning the better fitting model
+    fit_fit <- gstat::fit.variogram(vario, gstat::vgm(c("Exp", "Sph", 'Mat')))
+    mes_fit <- gstat::krige(fit ~ 1, interpol_dat, sp_grid, fit_fit)
+    # lwr
+    gstat_obj <- gstat::gstat(formula = lwr ~ 1, data = interpol_dat)
+    vario <- gstat::variogram(gstat_obj)
+    fit_lwr <- gstat::fit.variogram(vario, gstat::vgm(c("Exp", "Sph", 'Mat')))
+    mes_lwr <- gstat::krige(fit ~ 1, interpol_dat, sp_grid, fit_lwr)
+    output <- cbind(dense_grid, val_pred = mes_fit$var1.pred, val_var = mes_fit$var1.var, lwr_pred=mes_lwr$var1.pred, lwr_val=mes_lwr$var1.var)
+    output
+  }
+
+  norm_interpolated <- lapply(list_res, interpolate_predictions)[c('mesopic','cyan', 'red', 'cr_diff')]
+  if(as_df) norm_interpolated <- norm_interpolated %>% bind_rows(.id = 'testtype')
+
+  if(graph){
+    plot_list <- list()
+    for(i in 1:length(res_interpol)){
+      p <- ggplot(res_interpol[[i]], aes(x, y)) +
+        geom_raster(aes(fill = val_pred)) +
+        stat_contour(aes(z = val_pred), binwidth = 1, size = 0.1, color = 'black') +
+        scale_fill_gradient(limits = c(-30,30), low = 'black', high = 'white')+
+        labs(title = names(res_interpol)[i], x = 'Temporal - nasal [1]', y = 'Inferior - superior [1]', fill = "Sensitivity [dB]") +
+        coord_equal() +
+        tjebtools::theme_tjebo()
+      plot_list[[i]] <- p
+    }
+
+    p_wrap <- patchwork::wrap_plots(plot_list, guides = 'collect')
+    print(p_wrap)
+  }
+
+  return(norm_interpolated)
+}
+
+#' CoR_maia
+#' @name CoR_maia
 #' @description Coefficient of repeatability of norm data
-#' Calculated with formula CoR = 1.96*sqrt(2)* sqrt(within-subject-variance)
+#' Calculated with formula \eqn{CoR = 1.96* \sqrt2*\sqrt(within-subject-variance)}
 #'
 #' @author tjebo
 #'
@@ -80,7 +170,7 @@ CoR_maia <- function(graph = TRUE){
 }
 
 #' calc_globInd
-#'
+#' @name calc_globInd
 #' @author tjebo
 #'
 #' @description calculates global indices (mean deviation and pattern standard deviation) from given vectors
@@ -126,4 +216,16 @@ calc_globInd <- function (df, test_val, norm_val, var_norm) {
 
   result <- c(MeanDev = MDev, PSD = PSD)
   result
+}
+
+#' RSME
+#' @name RSME
+#' @description calculates root mean square error (RMSE) for model testing
+#'
+#' @param observed vector of observed values
+#' @param predicted vector of predicted values
+#' @return numeric vector
+#' @export
+RMSE <- function(observed, predicted) {
+  sqrt(mean((predicted - observed)^2, na.rm=TRUE))
 }
