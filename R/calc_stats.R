@@ -117,7 +117,7 @@ interpolate_norm <- function(age, sex, lens = 'natural', interval = 'confidence'
         scale_fill_gradient(limits = c(-30,30), low = 'black', high = 'white')+
         labs(title = names(res_interpol)[i], x = 'Temporal - nasal [1]', y = 'Inferior - superior [1]', fill = "Sensitivity [dB]") +
         coord_equal() +
-        tjebtools::theme_tjebo()
+        theme_min()
       plot_list[[i]] <- p
     }
 
@@ -162,7 +162,8 @@ CoR_maia <- function(graph = TRUE){
     facet_wrap(~ testtype, scales = 'free') +
     geom_hline(yintercept = mean_diff, size = 0.5) +
     geom_hline(yintercept = c(mean_diff - (1.96 * sd_diff), mean_diff + (1.96 * sd_diff)), linetype = 2, size = 0.5) +
-    labs(x = 'Mean [dB]', y = "Difference [dB]")
+    labs(x = 'Mean [dB]', y = "Difference [dB]") +
+    theme_min()
 
   if(graph) print(p); warning('mesopic testing of one individual contains NA')
 
