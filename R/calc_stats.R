@@ -219,8 +219,8 @@ calc_globInd <- function (df, test_val, norm_val, var_norm) {
   result
 }
 
-#' RSME
-#' @name RSME
+#' RMSE
+#' @name RMSE
 #' @description calculates root mean square error (RMSE) for model testing
 #'
 #' @param observed vector of observed values
