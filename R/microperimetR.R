@@ -1,9 +1,9 @@
-#' maiaR
+#' microperimetR
 #'
 #' For working with MAIA raw data
-#' @name maiaR
+#' @name microperimetR
 #' @docType package
-#' @author Tjebo Heeren and Maximilian Pfau
+#' @author Tjebo Heeren and Maximilian Pfau and ... TBC!
 #'
 #' @examples
 #' # Guide to plotting normal sensitivity data
