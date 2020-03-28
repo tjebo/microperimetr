@@ -5,8 +5,8 @@
 #' modified from: https://stackoverflow.com/a/47529507/7941188
 #'
 #' @author Stackoverflow::Moody_Mudskipper
-#' @param from_date beginning of time span. Takes dates as date or as character class
-#' @param to_date end (default: now!)
+#' @param from_date **required** beginning of time span. Takes dates as date or as character class
+#' @param to_date **required** end (default: now!)
 #' @param dec decide if you want to see decimals (default: FALSE)
 #' @return Data frame
 #'

@@ -7,18 +7,19 @@
 get_age(from_date, to_date = lubridate::now(), dec = FALSE)
 }
 \arguments{
-\item{to_date}{end (default: now!)}
+\item{from_date}{\strong{required} beginning of time span. Takes dates as date or as character class}
+
+\item{to_date}{\strong{required} end (default: now!)}
 
 \item{dec}{decide if you want to see decimals (default: FALSE)}
-
-\item{**from_date**}{beginning of time span. Takes dates as date or as character class}
 }
 \value{
 Data frame
 }
 \description{
 convenience function - calculate age in years.
+modified from: https://stackoverflow.com/a/47529507/7941188
 }
 \author{
-Stackoverflow :: Moody Mudskipper
+Stackoverflow::Moody_Mudskipper
 }

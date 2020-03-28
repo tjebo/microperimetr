@@ -4,7 +4,13 @@
 \alias{pred_location}
 \title{pred_location}
 \usage{
-pred_location(age = NULL, sex = NULL, lens = NULL, interval = "confidence")
+pred_location(
+  age = NULL,
+  sex = NULL,
+  lens = NULL,
+  interval = "confidence",
+  se.fit = FALSE
+)
 }
 \arguments{
 \item{age}{age of individual to be predicted. defaults to 50 if none given}

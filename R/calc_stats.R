@@ -13,7 +13,7 @@
 #' @return Data frame with predicted sensitivity values for all test types at each location
 #' @export
 
-pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = 'confidence'){
+pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = 'confidence', se.fit = FALSE){
   microperimetR:::using('tidyverse')
   if(is.null(age)) {warning('age is not set - default age of 50 years will be used'); age <- 50}
   if(is.null(sex)) {warning('sex is not set - default sex \'m\' will be used'); sex <- 'm'}
@@ -30,6 +30,7 @@ pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = 'confi
   #order list so that it has same order as unique splits
   data_list <- data_list[unique(split_vec)]
   list_lm <- lapply(data_list, function(x) lm(MeanSens ~ age + lens + sex, data = x))
+  if(se.fit == FALSE){
   res_pred <- do.call(rbind, lapply(list_lm, function(x) predict(x, newdata = newdata, interval = interval)))
   #give the names back
   rownames(res_pred) <- names(list_lm)
@@ -40,6 +41,18 @@ pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = 'confi
     mutate_at(.vars = vars(eccent, angle), .funs = 'as.numeric')
 
   return(results)
+  } else {
+  res_pred <- lapply(list_lm, function(x) predict(x, newdata = newdata, interval = interval, se.fit = TRUE))
+    res_pred <- do.call(rbind, lapply(res_pred, unlist))
+    rownames(res_pred) <- names(list_lm)
+
+    results <- res_pred %>% as.data.frame() %>% rownames_to_column('test.position') %>%
+      separate(test.position, c('testtype', 'position'), sep = '\\.') %>%
+      separate(position, c("eccent", "angle")) %>%
+      mutate_at(.vars = vars(eccent, angle), .funs = 'as.numeric') %>%
+      rename(lwr = fit2, upr = fit3)
+  return(results)
+}
 }
 
 #' interpolate_norm
@@ -154,18 +167,19 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
 #' @description Interpolates grid based on local predictions of normal data.
 #' For test points that correspond with basic normal grid, the values from \link{pred_location} will be used.
 #' For test points outside the normal grid location, values from \link{interpolate_norm} will be used
-#' @param test_data **required**. data frame with eccentricity and degree and corresponding test value
+#' @param data **required**. data frame with eccentricity and degree and corresponding test value.
+#' If data from several IDs, do bind them into one dataframe first, don't pass them as a list.
 #' @param age age of individual to be predicted. passed to \link{pred_location}
 #' @param sex sex of individual to be predicted. passed to \link{pred_location}
 #' @param lens lens status. must be either 'natural' (default) or 'pseudo'. passed to \link{pred_location}
 #' @param interval used in [stats::predict.lm]
 #' @author tjebo
-#' @return Data frame with original and predicted normal values.
-#' @md
+#' @return list of data frames (for each testID) with original and predicted normal values.
 #' @export
-compare_norm <- function(test_data, age = NULL, sex = NULL, lens = NULL, interval = 'confidence'){
+compare_norm <- function(data, age = NULL, sex = NULL, lens = NULL, interval = 'confidence'){
   maiaR:::using('tidyverse')
-
+  test_list <- data %>% split(data$testID)
+run_list <- function(test_data){
   test_locations <- unique(microperimetR:::data_model$position)
   ident_loc <- test_data[paste(test_data$eccent, test_data$angle, sep = '_') %in% test_locations,]
   non_ident_loc <- test_data[!paste(test_data$eccent, test_data$angle, sep = '_') %in% test_locations,]
@@ -192,6 +206,9 @@ compare_norm <- function(test_data, age = NULL, sex = NULL, lens = NULL, interva
   #return(names_l)
   new_frame <- bind_rows(ident_norm_pred, nonident_norm_pred) %>%
     select(patID, sex, age, testID, testtype, everything())
+}
+  list_res <- lapply(test_list, run_list)
+  list_res
 }
 
 #' CoR_maia
@@ -236,22 +253,29 @@ CoR_maia <- function(graph = TRUE){
   return(CoR)
 }
 
-#' calc_globInd
-#' @name calc_globInd
+#' MeanDev
+#' @name MeanDev
+#' @description calculates estimated mean deviation (MD)
+#' Variance is estimated with the [stats::predict.lm] function, assuming homoscedasticity
+#' (non-weighted linear regression with equal variance or residuals) residual.scale ^ 2.
+#'
+#' @return named vector with mean deviation (MDev) and pattern standard deviation (PSD)
 #' @author tjebo
-#'
-#' @description calculates global indices (mean deviation and pattern standard deviation) from given vectors
-#'
+#' @export
+MeanDev <- NULL
+
+#' MD_PSD_man
+#' @name MD_PSD_man
+#' @author tjebo
+#' @description calculates global indices mean deviation (MD) and pattern standard deviation (PSD) manually from data or vectors
 #' @param df Dataframe in which the vectors are found
-#' @param test_val observed sensitivities (vector)
-#' @param norm_val normal sensitivities for the same points
-#' @param var_norm variance of normal values for the same points
+#' @param test_val observed sensitivities (either column name or vector)
+#' @param norm_val normal sensitivities for the same points (either column name or vector)
+#' @param var_norm variance of normal values for the same points (either column name or vector)
 #'
 #' @return named vector with mean deviation (MDev) and pattern standard deviation (PSD)
 #' @export
-
-
-calc_globInd <- function (df, test_val, norm_val, var_norm) {
+MD_PSD_man <- function (df, test_val, norm_val, var_norm) {
 
   test_val_sub <- deparse(substitute(test_val))
   norm_val_sub <- deparse(substitute(norm_val))
@@ -273,7 +297,6 @@ calc_globInd <- function (df, test_val, norm_val, var_norm) {
   } else if (is.atomic(var_norm) == TRUE) {
     vn <- var_norm
   }
-
 
   MDev <- mean((tv - nv)/ vn, na.rm = T)/
     mean(1/vn, na.rm = T)

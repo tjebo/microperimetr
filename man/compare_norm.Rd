@@ -5,7 +5,7 @@
 \title{compare_norm}
 \usage{
 compare_norm(
-  test_data,
+  data,
   age = NULL,
   sex = NULL,
   lens = NULL,
@@ -13,7 +13,8 @@ compare_norm(
 )
 }
 \arguments{
-\item{test_data}{\strong{required}. data frame with eccentricity and degree and corresponding test value}
+\item{data}{\strong{required}. data frame with eccentricity and degree and corresponding test value.
+If data from several IDs, do bind them into one dataframe first, don't pass them as a list.}
 
 \item{age}{age of individual to be predicted. passed to \link{pred_location}}
 
@@ -24,7 +25,7 @@ compare_norm(
 \item{interval}{used in \link[stats:predict.lm]{stats::predict.lm}}
 }
 \value{
-Data frame with original and predicted normal values.
+list of data frames (for each testID) with original and predicted normal values.
 }
 \description{
 Interpolates grid based on local predictions of normal data.
