@@ -5,23 +5,24 @@
 \title{interpolate_norm}
 \usage{
 interpolate_norm(
-  age,
-  sex,
-  lens = "natural",
+  age = NULL,
+  sex = NULL,
+  lens = NULL,
   interval = "confidence",
   as_df = FALSE,
+  grid = NULL,
   grid_density = 0.2,
   graph = FALSE
 )
 }
 \arguments{
-\item{age}{required age of individual to be predicted}
+\item{age}{age of individual to be predicted. passed to \link{pred_location}}
 
-\item{sex}{required sex of individual to be predicted}
+\item{sex}{sex of individual to be predicted. passed to \link{pred_location}}
 
-\item{lens}{lens status. must be either 'natural' (default) or 'pseudo'}
+\item{lens}{lens status. must be either 'natural' (default) or 'pseudo'. passed to \link{pred_location}}
 
-\item{interval}{used in [stats::predict.lm()]}
+\item{interval}{used in \link[stats]{predict.lm}}
 
 \item{as_df}{FALSE (default): list of data frames will be returnedif TRUE, value of data frame will be returned.}
 
@@ -31,6 +32,11 @@ interpolate_norm(
 }
 \value{
 List of data frames with predicted results for grid for all test types
+}
+\description{
+Interpolates grid based on local predictions of normal data.
+}
+\examples{
 and plot if graph = TRUE
 # Tests were performed
  plot(gstat::variogramLine(fit_fit, 10), type='l')
@@ -41,9 +47,6 @@ RMSE(x$var1.pred,x$observed)
 vgm.fit
 plot(vgm, vgm.fit)
 sp::spplot(mes_ok_mean ["var1.pred"])
-}
-\description{
-Interpolates grid based on local predictions of normal data.
 }
 \author{
 tjebo and max

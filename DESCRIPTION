@@ -13,4 +13,5 @@ Suggested: jsonlite, lubridate, xml2, utils, sp, gstat
 License: GNU General Public License v3.0
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.0

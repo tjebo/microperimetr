@@ -18,10 +18,10 @@ read_maia(folder = getwd(), incomplete = FALSE, timeclass = "datetime")
 Data frame
 }
 \description{
-The function will extract the anonymised data from the raw .tgz output of your MAIA.
+The function will extract the anonymised data from the raw .tgz patient backup files of your MAIA device.
 }
 \examples{
-read_maia(folder = file.path(getwd(),'norm_raw'))
+read_maia(folder = file.path(getwd(), "norm_raw"))
 }
 \author{
 Tjebo

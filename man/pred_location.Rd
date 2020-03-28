@@ -4,16 +4,16 @@
 \alias{pred_location}
 \title{pred_location}
 \usage{
-pred_location(age, sex, lens = "natural", interval = "confidence")
+pred_location(age = NULL, sex = NULL, lens = NULL, interval = "confidence")
 }
 \arguments{
-\item{age}{required age of individual to be predicted}
+\item{age}{age of individual to be predicted. defaults to 50 if none given}
 
-\item{sex}{required sex of individual to be predicted}
+\item{sex}{sex of individual to be predicted. defaults to 'm' if none given}
 
-\item{lens}{lens status. must be either 'natural' (default) or 'pseudo'}
+\item{lens}{lens status. must be either 'natural' (default) or 'pseudo'. defaults to 'natural' if none given}
 
-\item{interval}{used in [stats::predict.lm()]}
+\item{interval}{used in \link[stats]{predict.lm}}
 }
 \value{
 Data frame with predicted sensitivity values for all test types at each location

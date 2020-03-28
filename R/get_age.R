@@ -1,17 +1,19 @@
-#' get the age (time difference in years)
+#' get_age
+#' @name get_age
+#' @description
+#' convenience function - calculate age in years.
+#' modified from: https://stackoverflow.com/a/47529507/7941188
 #'
-#' The function will extract the data from the raw .tgz output of your MAIA.
-#' @author Stackoverflow :: Moody Mudskipper
-#' @param from_date beginning of time span
+#' @author Stackoverflow::Moody_Mudskipper
+#' @param from_date beginning of time span. Takes dates as date or as character class
 #' @param to_date end (default: now!)
 #' @param dec decide if you want to see decimals (default: FALSE)
 #' @return Data frame
 #'
-#'
 #' @export
 
 get_age <- function(from_date, to_date = lubridate::now(), dec = FALSE) {
-  maiaR:::using('lubridate')
+  microperimetR:::using('lubridate')
   if (is.character(from_date))
     from_date <- lubridate::as_date(from_date)
   if (is.character(to_date))

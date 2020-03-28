@@ -14,8 +14,9 @@ get_names(folder = getwd())
 Data frame
 }
 \description{
-The function will extract the data from the raw .tgz output of your MAIA.
-It is generally not recommended to use this function in order to keep personal identifiable data as safe as possible.
+Internal function to extract name, dob and and sex from MAIA observers.
+This data is stored in json files attached to the microperimetry files.
+It is generally not recommended to use this function explicitely in order to keep personal identifiable data as safe as possible.
 }
 \author{
 Tjebo

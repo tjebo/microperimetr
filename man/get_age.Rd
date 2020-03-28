@@ -2,22 +2,22 @@
 % Please edit documentation in R/get_age.R
 \name{get_age}
 \alias{get_age}
-\title{get the age (time difference in years)}
+\title{get_age}
 \usage{
 get_age(from_date, to_date = lubridate::now(), dec = FALSE)
 }
 \arguments{
-\item{from_date}{beginning of time span}
-
 \item{to_date}{end (default: now!)}
 
 \item{dec}{decide if you want to see decimals (default: FALSE)}
+
+\item{**from_date**}{beginning of time span. Takes dates as date or as character class}
 }
 \value{
 Data frame
 }
 \description{
-The function will extract the data from the raw .tgz output of your MAIA.
+convenience function - calculate age in years.
 }
 \author{
 Stackoverflow :: Moody Mudskipper

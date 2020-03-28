@@ -2,7 +2,7 @@
 #' Norm data
 #'
 #' Data obtained from healthy controls. A broad range of ages were used.
-#' It contains data of \Sexpr{unique(interaction(maiaR::norm_data$patID, maiaR::norm_data$eye))} eyes of \Sexpr{unique(maiaR::norm_data$patID)} observers.
+#' It contains data of \Sexpr{length(unique(interaction(maiaR::norm_data$patID, maiaR::norm_data$eye)))} eyes of \Sexpr{length(unique(maiaR::norm_data$patID))} observers.
 #'
 #' DOCUMENTATION TBC
 #'
