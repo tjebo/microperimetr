@@ -4,16 +4,16 @@
 \alias{MD_PSD_man}
 \title{MD_PSD_man}
 \usage{
-MD_PSD_man(df, test_val, norm_val, var_norm)
+MD_PSD_man(test_val, norm_val, var_norm, data = NULL)
 }
 \arguments{
-\item{df}{Dataframe in which the vectors are found}
+\item{test_val}{observed sensitivities. Can be column name (quoted or unquoted) or numeric vector}
 
-\item{test_val}{observed sensitivities (either column name or vector)}
+\item{norm_val}{mean of normal sensitivities of same length as test_val. Can be column name (quoted or unquoted) or numeric vector}
 
-\item{norm_val}{normal sensitivities for the same points (either column name or vector)}
+\item{var_norm}{variance of normal values of same length as test_val. Can be column name (quoted or unquoted) or numeric vector}
 
-\item{var_norm}{variance of normal values for the same points (either column name or vector)}
+\item{data}{\strong{optional} Dataframe with vectors for analysis}
 }
 \value{
 named vector with mean deviation (MDev) and pattern standard deviation (PSD)

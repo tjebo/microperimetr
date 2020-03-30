@@ -1,5 +1,5 @@
 # read pfau data and replace <0 with -1
-data_wide <- read.csv("data-raw/norm_data.csv", header=TRUE, sep=";", stringsAsFactors = FALSE) %>%
+data_wide <- read.csv("data-raw/norm_pfau.csv", header=TRUE, sep=";", stringsAsFactors = FALSE) %>%
   mutate_at(.vars = vars(contains('X')), function(x) str_replace(x, '<0','-1'))
 #data to long format
 #splitting columns, removing "X" in the "position" variable
@@ -25,12 +25,18 @@ norm_data <-
   pivot_wider(names_from = 'testtype', values_from = 'value') %>%
   mutate(cr_diff = cyan - red) %>%
   pivot_longer(names_to = 'testtype', values_to = 'value', cols = mesopic:cr_diff) %>%
-  mutate(testtype = factor(testtype, levels = c("mesopic", "cyan", "red", "cr_diff")))
+  mutate(testtype = factor(testtype, levels = c("mesopic", "cyan", "red", "cr_diff")),
+         testID = paste(patID, eye, testtype, testnumber, sep = '_')) %>%
+  arrange(testID, eccent, angle) %>%
+  group_by(testID) %>%
+  mutate(stimID = seq_along(testID)) %>%
+  ungroup()
 
 usethis::use_data(norm_data, overwrite = TRUE)
 
 data_model <-
   norm_data %>%
+  select(-testID, stimID)  %>%
   mutate(testnumber = paste0("E", testnumber)) %>%
   pivot_wider(names_from = 'testnumber', values_from = 'value') %>%
   group_by(testtype) %>%
@@ -38,6 +44,8 @@ data_model <-
   ungroup() %>%
   select(patID, eye, sex, age, lens, testtype, position, MeanSens)
 
-usethis::use_data(data_model, internal = TRUE, overwrite = TRUE)
+pred_norm <- MD_PSD(norm_data)
+
+usethis::use_data(data_model, pred_norm, internal = TRUE, overwrite = TRUE)
 
 

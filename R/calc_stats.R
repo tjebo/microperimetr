@@ -13,46 +13,47 @@
 #' @return Data frame with predicted sensitivity values for all test types at each location
 #' @export
 
-pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = 'confidence', se.fit = FALSE){
-  microperimetR:::using('tidyverse')
-  if(is.null(age)) {warning('age is not set - default age of 50 years will be used'); age <- 50}
-  if(is.null(sex)) {warning('sex is not set - default sex \'m\' will be used'); sex <- 'm'}
-  if(is.null(lens)) {warning('lens is not set - default lens \'natural\' be used'); lens <- 'natural'}
+pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = "confidence") {
+  microperimetR:::using("tidyverse")
 
-  if(!lens%in% c('natural','pseudo')) stop('lens needs to be either \'natural\' or \'pseudo\')')
-  if(!sex%in% c('m','f')) stop('sex needs to be either \'m\' or \'f\')')
+  if (is.null(age)) {
+    warning("age is not set - default age of 50 years will be used")
+    age <- 50L
+  }
+  if (is.null(sex)) {
+    warning("sex is not set - default sex 'm' will be used")
+    sex <- "m"
+  }
+  if (is.null(lens)) {
+    warning("lens is not set - default lens 'natural' be used")
+    lens <- "natural"
+  }
 
-  newdata <- data.frame(age = age, sex = sex, lens = lens)
-  split_vec <-interaction(microperimetR:::data_model$testtype, microperimetR:::data_model$position)
-  #  putting test and retest in two columns for
-  # linear modelling, icc and kendall calculation
+  if (!lens %in% c("natural", "pseudo")) stop("lens needs to be either 'natural' or 'pseudo')")
+  if (!sex %in% c("m", "f")) stop("sex needs to be either 'm' or 'f')")
+
+  split_vec <- interaction(microperimetR:::data_model$testtype, microperimetR:::data_model$position)
+
+  #  putting test and retest in two columns for linear modelling, icc and kendall calculation
   data_list <- microperimetR:::data_model %>% split(f = split_vec)
-  #order list so that it has same order as unique splits
+
+  # order list so that it has same order as unique splits
   data_list <- data_list[unique(split_vec)]
   list_lm <- lapply(data_list, function(x) lm(MeanSens ~ age + lens + sex, data = x))
-  if(se.fit == FALSE){
-  res_pred <- do.call(rbind, lapply(list_lm, function(x) predict(x, newdata = newdata, interval = interval)))
-  #give the names back
+
+  newdata <- data.frame(age = age, sex = sex, lens = lens)
+
+  res_pred <- lapply(list_lm, function(x) predict(x, newdata = newdata, interval = interval))
+  res_pred <- do.call(rbind, lapply(res_pred, unlist))
   rownames(res_pred) <- names(list_lm)
 
-  results <- res_pred %>% as.data.frame() %>% rownames_to_column('test.position') %>%
-    separate(test.position, c('testtype', 'position'), sep = '\\.') %>%
+  results <- res_pred %>%
+    as.data.frame() %>%
+    rownames_to_column("test.position") %>%
+    separate(test.position, c("testtype", "position"), sep = "\\.") %>%
     separate(position, c("eccent", "angle")) %>%
-    mutate_at(.vars = vars(eccent, angle), .funs = 'as.numeric')
-
+    mutate_at(.vars = vars(eccent, angle), .funs = "as.numeric")
   return(results)
-  } else {
-  res_pred <- lapply(list_lm, function(x) predict(x, newdata = newdata, interval = interval, se.fit = TRUE))
-    res_pred <- do.call(rbind, lapply(res_pred, unlist))
-    rownames(res_pred) <- names(list_lm)
-
-    results <- res_pred %>% as.data.frame() %>% rownames_to_column('test.position') %>%
-      separate(test.position, c('testtype', 'position'), sep = '\\.') %>%
-      separate(position, c("eccent", "angle")) %>%
-      mutate_at(.vars = vars(eccent, angle), .funs = 'as.numeric') %>%
-      rename(lwr = fit2, upr = fit3)
-  return(results)
-}
 }
 
 #' interpolate_norm
@@ -84,6 +85,7 @@ pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = 'confi
 #'
 interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "confidence", as_df = FALSE, grid = NULL, grid_density = 0.2, graph = FALSE) {
   microperimetR:::using("tidyverse", "gstat", "sp")
+
   # x - y coordinates
   results <- microperimetR::pred_location(age = age, sex = sex, lens = lens, interval = interval) %>%
     mutate(
@@ -91,56 +93,52 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
       x = cos(angle * pi / 180) * as.numeric(eccent),
       y = sin(angle * pi / 180) * as.numeric(eccent)
     )
-
   # create grid
-  if (is.null(grid)) {
-    dense_grid <- expand.grid(x = seq(-10, 10, by = grid_density), y = seq(-10, 10, by = grid_density)) %>%
-      mutate(eccent = sqrt(x^2 + y^2))
-    sp_grid <- dense_grid
-    sp::coordinates(sp_grid) <- ~ x + y
-    sp::gridded(sp_grid) <- TRUE
-  } else {
+  if (!is.null(grid)) {
     dense_grid <- grid %>%
       mutate(
-        angle = as.integer(angle),
         x = cos(angle * pi / 180) * as.numeric(eccent),
         y = sin(angle * pi / 180) * as.numeric(eccent)
       )
     sp_grid <- dense_grid
     sp::coordinates(sp_grid) <- ~ x + y
+  } else {
+    dense_grid <- expand.grid(x = seq(-10, 10, by = grid_density), y = seq(-10, 10, by = grid_density))
+    sp_grid <- dense_grid
+    sp::coordinates(sp_grid) <- ~ x + y
+    sp::gridded(sp_grid) <- TRUE
   }
 
   list_res <- results %>% split(results$testtype)
-  interpolate_predictions <- function(x) {
-    interpol_dat <- x %>% select(x, y, "fit", "lwr", "upr")
+
+  interpolate_predictions <- function(dat) {
+    interpol_dat <- dat %>% select(x, y, "fit", "lwr")
     sp::coordinates(interpol_dat) <- ~ x + y
+
     # fit with inverted distance weighting
+    # vgm fitting with set of models, returning the better fitting model
+    # fit (mean sensitivity)
     gstat_obj <- gstat::gstat(formula = fit ~ 1, data = interpol_dat)
     vario <- gstat::variogram(gstat_obj)
-    # vgm fitting with set of models, returning the better fitting model
     fit_fit <- gstat::fit.variogram(vario, gstat::vgm(c("Exp", "Sph", "Mat")))
     mes_fit <- gstat::krige(fit ~ 1, interpol_dat, sp_grid, fit_fit)
-    # lwr
+    # lwr (lower value of error interval)
     gstat_obj <- gstat::gstat(formula = lwr ~ 1, data = interpol_dat)
     vario <- gstat::variogram(gstat_obj)
     fit_lwr <- gstat::fit.variogram(vario, gstat::vgm(c("Exp", "Sph", "Mat")))
-    mes_lwr <- gstat::krige(fit ~ 1, interpol_dat, sp_grid, fit_lwr)
-    # upr
-    gstat_obj <- gstat::gstat(formula = upr ~ 1, data = interpol_dat)
-    vario <- gstat::variogram(gstat_obj)
-    fit_upr <- gstat::fit.variogram(vario, gstat::vgm(c("Exp", "Sph", "Mat")))
-    mes_upr <- gstat::krige(fit ~ 1, interpol_dat, sp_grid, fit_upr)
+    mes_lwr <- gstat::krige(lwr ~ 1, interpol_dat, sp_grid, fit_lwr)
 
-    output <- cbind(select(dense_grid,-testtype),
+    output <- cbind(dense_grid,
       val_pred = mes_fit$var1.pred, val_var = mes_fit$var1.var,
-      lwr_pred = mes_lwr$var1.pred, lwr_var = mes_lwr$var1.var,
-      upr_pred = mes_upr$var1.pred, upr_var = mes_upr$var1.var
-    )
+      lwr_pred = mes_lwr$var1.pred, lwr_var = mes_lwr$var1.var
+    ) %>%
+      mutate(upr_pred = val_pred + (val_pred - lwr_pred))
     output
   }
 
   norm_interpolated <- lapply(list_res, interpolate_predictions)[c("mesopic", "cyan", "red", "cr_diff")]
-  if (as_df) norm_interpolated <- norm_interpolated %>% bind_rows(.id = 'testtype')
+
+  if (as_df) norm_interpolated <- norm_interpolated %>% bind_rows(.id = "testtype")
 
   if (graph) {
     plot_list <- list()
@@ -167,47 +165,67 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
 #' @description Interpolates grid based on local predictions of normal data.
 #' For test points that correspond with basic normal grid, the values from \link{pred_location} will be used.
 #' For test points outside the normal grid location, values from \link{interpolate_norm} will be used
-#' @param data **required**. data frame with eccentricity and degree and corresponding test value.
-#' If data from several IDs, do bind them into one dataframe first, don't pass them as a list.
-#' @param age age of individual to be predicted. passed to \link{pred_location}
-#' @param sex sex of individual to be predicted. passed to \link{pred_location}
-#' @param lens lens status. must be either 'natural' (default) or 'pseudo'. passed to \link{pred_location}
+#' @param data **required**. data frame with sensitivity values. See details.
+#' Data argument should be data frame only! List of data frames could result in unexpected output.
+#' The data frame is ideally taken directly from [read_maia] output, ideally joined with information on lens status. (not contained in read_maia() output!)
+#' It should at least contain following columns: **patID, eye, testID, testtype, eccent, angle, value, stimID**
+#' It should ideally also contain **age, sex and lens** - If not, defaults of age, sex and lens of \link{pred_location} will be used
 #' @param interval used in [stats::predict.lm]
 #' @author tjebo
 #' @return list of data frames (for each testID) with original and predicted normal values.
 #' @export
-compare_norm <- function(data, age = NULL, sex = NULL, lens = NULL, interval = 'confidence'){
-  maiaR:::using('tidyverse')
+compare_norm <- function(data, interval = "confidence") {
+  maiaR:::using("tidyverse")
   test_list <- data %>% split(data$testID)
-run_list <- function(test_data){
-  test_locations <- unique(microperimetR:::data_model$position)
-  ident_loc <- test_data[paste(test_data$eccent, test_data$angle, sep = '_') %in% test_locations,]
-  non_ident_loc <- test_data[!paste(test_data$eccent, test_data$angle, sep = '_') %in% test_locations,]
+  run_list <- function(test_data) {
+    test_locations <- unique(microperimetR:::data_model$position)
+    ident_loc <- test_data[paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ]
+    non_ident_loc <- test_data[!paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ]
 
-  age <- as.numeric(unique(test_data$age))
-  sex <- unique(test_data$sex)
+    if ("age" %in% names(test_data)) {
+      age <- as.numeric(unique(test_data$age))
+    } else {
+      age <- NULL
+    }
 
-  results <- pred_location(age = age, sex = sex, lens = lens, interval = interval) %>%
-    mutate(
-      angle = as.integer(angle),
-      x = cos(angle * pi / 180) * as.numeric(eccent),
-      y = sin(angle * pi / 180) * as.numeric(eccent)
-    )
+    if ("sex" %in% names(test_data)) {
+      sex <- as.character(unique(test_data$sex))
+    } else {
+      sex <- NULL
+    }
+    if ("lens" %in% names(test_data)) {
+      lens <- as.character(unique(test_data$lens))
+    } else {
+      lens <- NULL
+    }
 
-  ident_norm_pred <- results %>% right_join(ident_loc, by = c('eccent','angle', 'testtype'))
+    results <- microperimetR::pred_location(age = age, sex = sex, lens = lens, interval = interval) %>%
+      mutate(
+        angle = as.integer(angle),
+        x = cos(angle * pi / 180) * as.numeric(eccent),
+        y = sin(angle * pi / 180) * as.numeric(eccent)
+      )
 
-  nonident_norm_pred <-
-    interpolate_norm(age = age, lens = lens, sex = sex, interval = interval,
-                     grid = non_ident_loc, as_df = TRUE)   %>%
-    select(testtype, eccent, angle, x, y,
-           fit = val_pred, lwr = lwr_pred, upr = upr_pred) %>%
-    right_join(non_ident_loc, by = c('testtype', 'eccent','angle'))
-  names_l <- list(names(ident_norm_pred), names(nonident_norm_pred))
-  #return(names_l)
-  new_frame <- bind_rows(ident_norm_pred, nonident_norm_pred) %>%
-    select(patID, sex, age, testID, testtype, everything())
-}
-  list_res <- lapply(test_list, run_list)
+    ident_norm_pred <- results %>% right_join(ident_loc, by = c("eccent", "angle", "testtype"))
+
+    if (nrow(non_ident_loc) > 0) {
+      nonident_norm_pred <- microperimetR::interpolate_norm(
+        age = age, lens = lens, sex = sex, interval = interval,
+        grid = non_ident_loc, as_df = TRUE
+      ) %>%
+        select(testtype, eccent, angle, fit = val_pred, lwr = lwr_pred, upr = upr_pred) %>%
+        right_join(non_ident_loc, by = c("testtype", "eccent", "angle"))
+      new_frame <- bind_rows(ident_norm_pred, nonident_norm_pred)
+    } else {
+      new_frame <- ident_norm_pred
+    }
+
+    new_frame <- new_frame %>% select(patID, sex, age, eye, testID, testtype, eccent, angle, stimID, value, fit, lwr, upr)
+    # just for testing purpose, this line will be deleted at some point
+    new_frame <- nonident_norm_pred %>% select(patID, sex, age, testID, testtype, everything())
+  }
+  list_res <- lapply(test_list, run_list) %>% bind_rows()
+
   list_res
 }
 
@@ -253,59 +271,84 @@ CoR_maia <- function(graph = TRUE){
   return(CoR)
 }
 
-#' MeanDev
-#' @name MeanDev
-#' @description calculates estimated mean deviation (MD)
-#' Variance is estimated with the [stats::predict.lm] function, assuming homoscedasticity
-#' (non-weighted linear regression with equal variance or residuals) residual.scale ^ 2.
+#' MD_PSD
+#' @name MD_PSD
+#' @description calculates estimated mean deviation (MD). This is estimated, because there is no 'real mean' of normal values for each location.
+#' The mean and variance are taken from the local linear regression taken from the normal data, including age, sex and lens status as covariates.
+#' Variance is estimated with the [stats::predict.lm] function, assuming homoscedasticity in a non-weighted linear regression with equal variance or residuals.
+#' The estimated variance is (currently) equal to the prediction interval
 #'
 #' @return named vector with mean deviation (MDev) and pattern standard deviation (PSD)
 #' @author tjebo
 #' @export
-MeanDev <- NULL
+MD_PSD <- function(data) {
+  data <- data %>% filter(stimID != 0) # remove blind spot. Make sure this remains stimID for blind spot in maia import!!!
+
+  comparedat <- compare_norm(data, interval = "predict") %>%
+    mutate(pred_int = upr - lwr) %>%
+    split(.$testID)
+  # return(comparedat)
+  extractMD <- function(comparedat) {
+    testval <- comparedat$value
+    normval <- comparedat$fit
+    normvar <- comparedat$pred_int
+
+    MDev <- mean((testval - normval) / normvar, na.rm = TRUE) /
+      mean(1 / normvar, na.rm = TRUE)
+
+    PSD <- sqrt(mean(normvar, na.rm = TRUE) *
+                  (sum((testval - normval - MDev)^2 / normvar, na.rm = TRUE) / (length(normvar) - 1)))
+
+    result <- c(MeanDev = MDev, PSD = PSD)
+    result
+  }
+  res_MD <- lapply(comparedat, extractMD) %>%
+    do.call(rbind, .) %>%
+    as.data.frame() %>%
+    rownames_to_column("testID")
+  res_MD
+}
 
 #' MD_PSD_man
 #' @name MD_PSD_man
 #' @author tjebo
 #' @description calculates global indices mean deviation (MD) and pattern standard deviation (PSD) manually from data or vectors
-#' @param df Dataframe in which the vectors are found
-#' @param test_val observed sensitivities (either column name or vector)
-#' @param norm_val normal sensitivities for the same points (either column name or vector)
-#' @param var_norm variance of normal values for the same points (either column name or vector)
+#' @param test_val observed sensitivities. Can be column name (quoted or unquoted) or numeric vector
+#' @param norm_val mean of normal sensitivities of same length as test_val. Can be column name (quoted or unquoted) or numeric vector
+#' @param var_norm variance of normal values of same length as test_val. Can be column name (quoted or unquoted) or numeric vector
+#' @param data **optional** Dataframe with vectors for analysis
 #'
 #' @return named vector with mean deviation (MDev) and pattern standard deviation (PSD)
 #' @export
-MD_PSD_man <- function (df, test_val, norm_val, var_norm) {
-
+MD_PSD_man <- function (test_val, norm_val, var_norm, data = NULL) {
   test_val_sub <- deparse(substitute(test_val))
   norm_val_sub <- deparse(substitute(norm_val))
   var_norm_sub <- deparse(substitute(var_norm))
 
-  if(test_val_sub %in% names(df) == TRUE) {
-    tv <- df[[test_val_sub]]
-  } else if (is.atomic(test_val) == TRUE) {
-    tv <- test_val
+  if (test_val_sub %in% names(data)) {
+    testval <- data[[test_val_sub]]
+  } else if (is.atomic(test_val)) {
+    testval <- test_val
   }
-  if(norm_val_sub %in% names(df) == TRUE) {
-    nv <- df[[norm_val_sub]]
-  } else if (is.atomic(norm_val) == TRUE) {
-    nv <- norm_val
-  }
-
-  if(var_norm_sub %in% names(df) == TRUE) {
-    vn <- df[[var_norm_sub]]
-  } else if (is.atomic(var_norm) == TRUE) {
-    vn <- var_norm
+  if (norm_val_sub %in% names(data)) {
+    normval <- data[[norm_val_sub]]
+  } else if (is.atomic(norm_val)) {
+    normval <- norm_val
   }
 
-  MDev <- mean((tv - nv)/ vn, na.rm = T)/
-    mean(1/vn, na.rm = T)
+  if (var_norm_sub %in% names(data)) {
+    normvar <- data[[var_norm_sub]]
+  } else if (is.atomic(var_norm)) {
+    normvar <- var_norm
+  }
+  if(length(normval)!=length(testval)) stop('norm_val needs to be of same length as test_val')
+  if(length(normvar)!=length(testval)) stop('norm_var needs to be of same length as test_val')
 
-  PSD <- sqrt(mean(vn, na.rm = T) *
-                (sum((tv-nv-MDev)^2/vn)/(length(vn)-1)))
+  MDev <- mean((testval - normval)/ normvar, na.rm = TRUE)/
+    mean(1/normvar, na.rm = TRUE)
 
-  result <- c(MeanDev = MDev, PSD = PSD)
-  result
+  PSD <- sqrt(mean(normvar, na.rm = TRUE) *
+                (sum((testval-normval-MDev)^2/normvar, na.rm = TRUE)/(length(normvar)-1)))
 }
 
 #' RMSE

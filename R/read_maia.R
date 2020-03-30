@@ -55,8 +55,10 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
         })
         # make values positive, except the -1 (absolute scotomas)
         stimuli_df <- data.frame(t(sapply(l_stimuli, c)), row.names = 1:length(l_stimuli), stringsAsFactors = FALSE) %>%
-          mutate_all(as.integer) %>%
-          mutate(value = ifelse(value == 1, -1, value * (-1)))
+          mutate(id = as.integer(id), value = as.integer(value),
+                 eccent = round(as.numeric(eccent),3), angle = round(as.numeric(angle),3)) %>%
+          mutate(value = ifelse(value == 1, -1, value * (-1)),
+                 angle = ifelse(sign(angle) == -1, 360 + angle, angle))
 
         ## define here what else you want to pull out from the xml
         list1 <- list(

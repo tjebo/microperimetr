@@ -4,23 +4,14 @@
 \alias{compare_norm}
 \title{compare_norm}
 \usage{
-compare_norm(
-  data,
-  age = NULL,
-  sex = NULL,
-  lens = NULL,
-  interval = "confidence"
-)
+compare_norm(data, interval = "confidence")
 }
 \arguments{
-\item{data}{\strong{required}. data frame with eccentricity and degree and corresponding test value.
-If data from several IDs, do bind them into one dataframe first, don't pass them as a list.}
-
-\item{age}{age of individual to be predicted. passed to \link{pred_location}}
-
-\item{sex}{sex of individual to be predicted. passed to \link{pred_location}}
-
-\item{lens}{lens status. must be either 'natural' (default) or 'pseudo'. passed to \link{pred_location}}
+\item{data}{\strong{required}. data frame with sensitivity values. See details.
+Data argument should be data frame only! List of data frames could result in unexpected output.
+The data frame is ideally taken directly from \link{read_maia} output, ideally joined with information on lens status. (not contained in read_maia() output!)
+It should at least contain following columns: \strong{patID, eye, testID, testtype, eccent, angle, value, stimID}
+It should ideally also contain \strong{age, sex and lens} - If not, defaults of age, sex and lens of \link{pred_location} will be used}
 
 \item{interval}{used in \link[stats:predict.lm]{stats::predict.lm}}
 }
