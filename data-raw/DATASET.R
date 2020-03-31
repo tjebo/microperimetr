@@ -32,6 +32,7 @@ norm_data <-
   mutate(stimID = seq_along(testID)) %>%
   ungroup()
 
+
 usethis::use_data(norm_data, overwrite = TRUE)
 
 data_model <-
@@ -44,8 +45,26 @@ data_model <-
   ungroup() %>%
   select(patID, eye, sex, age, lens, testtype, position, MeanSens)
 
-pred_norm <- MD_PSD(norm_data)
+# adding the output of linear model to the norm data
+pred_norm <- compare_norm(norm_data) # that takes a long time!
+pred_shape <- pred_norm %>%
+  mutate(testnumber = str_sub(testID, -1, -1)) %>%
+  select(patID, eye, testtype, testnumber, eccent, angle, stimID, value, fit, lwr, upr) %>%
+  mutate(testtype = factor(testtype, levels = c("mesopic", "cyan", "red", "cr_diff")),
+         testID = paste(patID, eye, testtype, testnumber, sep = '_'))
 
-usethis::use_data(data_model, pred_norm, internal = TRUE, overwrite = TRUE)
+MD_PSD_norm <- MD_PSD(pred_shape)
+
+summary_MDPSD <- microperimetR:::MD_PSD_norm %>% mutate(testID = str_replace(testID, 'cr_diff','crdiff')) %>%
+  separate(testID, c('patID', 'eye', 'testtype', 'testnumber')) %>%
+  mutate(testtype = str_replace(testtype, 'crdiff','cr_diff')) %>%
+  group_by(patID, testtype) %>%
+  summarise_at(.vars = vars(MeanDev, PSD), .funs = mean) %>%
+  ungroup %>%
+  split(.$testtype)
+# data_model <- microperimetR:::data_model
+# pred_shape <- microperimetR:::pred_shape
+# MD_PSD_norm <- microperimetR:::MD_PSD_norm
+usethis::use_data(data_model, pred_shape, MD_PSD_norm, summary_MDPSD, internal = TRUE, overwrite = TRUE)
 
 

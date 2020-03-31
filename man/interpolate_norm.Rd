@@ -10,7 +10,7 @@ interpolate_norm(
   lens = NULL,
   interval = "confidence",
   as_df = FALSE,
-  grid = NULL,
+  newgrid = NULL,
   grid_density = 0.2,
   graph = FALSE
 )

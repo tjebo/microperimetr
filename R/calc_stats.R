@@ -83,7 +83,7 @@ pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = "confi
 #' sp::spplot(mes_ok_mean ["var1.pred"])
 #' @export
 #'
-interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "confidence", as_df = FALSE, grid = NULL, grid_density = 0.2, graph = FALSE) {
+interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "confidence", as_df = FALSE, newgrid = NULL, grid_density = 0.2, graph = FALSE) {
   microperimetR:::using("tidyverse", "gstat", "sp")
 
   # x - y coordinates
@@ -94,22 +94,25 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
       y = sin(angle * pi / 180) * as.numeric(eccent)
     )
   # create grid
-  if (!is.null(grid)) {
-    dense_grid <- grid %>%
-      mutate(
-        x = cos(angle * pi / 180) * as.numeric(eccent),
-        y = sin(angle * pi / 180) * as.numeric(eccent)
-      )
+  if (!is.null(newgrid)) {
+    dense_grid <- newgrid %>% select(eccent, angle) %>%
+      mutate(x = cos(angle * pi / 180) * as.numeric(eccent),
+             y = sin(angle * pi / 180) * as.numeric(eccent))
     sp_grid <- dense_grid
-    sp::coordinates(sp_grid) <- ~ x + y
-  } else {
+    sp::coordinates(sp_grid) <- ~ x + y} else if (is.null(newgrid)) {
     dense_grid <- expand.grid(x = seq(-10, 10, by = grid_density), y = seq(-10, 10, by = grid_density))
     sp_grid <- dense_grid
     sp::coordinates(sp_grid) <- ~ x + y
     sp::gridded(sp_grid) <- TRUE
   }
 
+  # if no testdata given, will always produce prediction for all testtypes!!!
+  # Don't get confused in the other fucntions which may get the entire set as an intermediate outpu
+  if (is.null(newgrid)) {
   list_res <- results %>% split(results$testtype)
+} else {
+  list_res <- filter(results, testtype == unique(newgrid$testtype)) %>% split(.$testtype)
+}
 
   interpolate_predictions <- function(dat) {
     interpol_dat <- dat %>% select(x, y, "fit", "lwr")
@@ -136,9 +139,9 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
     output
   }
 
-  norm_interpolated <- lapply(list_res, interpolate_predictions)[c("mesopic", "cyan", "red", "cr_diff")]
+  norm_interpolated <- lapply(list_res, interpolate_predictions)
 
-  if (as_df) norm_interpolated <- norm_interpolated %>% bind_rows(.id = "testtype")
+  if (as_df) norm_interpolated <- norm_interpolated %>% bind_rows(.id = 'testtype')
 
   if (graph) {
     plot_list <- list()
@@ -174,13 +177,15 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
 #' @author tjebo
 #' @return list of data frames (for each testID) with original and predicted normal values.
 #' @export
-compare_norm <- function(data, interval = "confidence") {
+compare_norm <- function(testresults, interval = "confidence") {
   maiaR:::using("tidyverse")
-  test_list <- data %>% split(data$testID)
+  test_list <- testresults %>% split(., testresults$testID)
+
+  test_locations <- as.character(unique(microperimetR:::data_model$position))
+
   run_list <- function(test_data) {
-    test_locations <- unique(microperimetR:::data_model$position)
-    ident_loc <- test_data[paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ]
-    non_ident_loc <- test_data[!paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ]
+    ident_loc <- test_data[paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ] %>% select(-testID)
+    non_ident_loc <- test_data[!paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ] %>% select(-testID)
 
     if ("age" %in% names(test_data)) {
       age <- as.numeric(unique(test_data$age))
@@ -205,13 +210,12 @@ compare_norm <- function(data, interval = "confidence") {
         x = cos(angle * pi / 180) * as.numeric(eccent),
         y = sin(angle * pi / 180) * as.numeric(eccent)
       )
-
     ident_norm_pred <- results %>% right_join(ident_loc, by = c("eccent", "angle", "testtype"))
 
     if (nrow(non_ident_loc) > 0) {
-      nonident_norm_pred <- microperimetR::interpolate_norm(
+      nonident_norm_pred <- interpolate_norm(
         age = age, lens = lens, sex = sex, interval = interval,
-        grid = non_ident_loc, as_df = TRUE
+        newgrid = non_ident_loc, as_df = TRUE
       ) %>%
         select(testtype, eccent, angle, fit = val_pred, lwr = lwr_pred, upr = upr_pred) %>%
         right_join(non_ident_loc, by = c("testtype", "eccent", "angle"))
@@ -220,11 +224,9 @@ compare_norm <- function(data, interval = "confidence") {
       new_frame <- ident_norm_pred
     }
 
-    new_frame <- new_frame %>% select(patID, sex, age, eye, testID, testtype, eccent, angle, stimID, value, fit, lwr, upr)
-    # just for testing purpose, this line will be deleted at some point
-    new_frame <- nonident_norm_pred %>% select(patID, sex, age, testID, testtype, everything())
+    new_frame <- new_frame %>% select(patID, sex, age, eye, testtype, eccent, angle, stimID, value, fit, lwr, upr)
   }
-  list_res <- lapply(test_list, run_list) %>% bind_rows()
+  list_res <- lapply(test_list, run_list) %>% bind_rows(.id = "testID")
 
   list_res
 }
@@ -247,6 +249,7 @@ CoR_maia <- function(graph = TRUE){
 
   data_wide <- microperimetR::norm_data %>%
     mutate(testnumber = paste0("E", testnumber)) %>%
+    select(-testID) %>%
     pivot_wider(names_from = 'testnumber', values_from = 'value') %>%
     mutate(diff_val = E1-E2, avg = (E1+E2)/2)
 
@@ -277,17 +280,16 @@ CoR_maia <- function(graph = TRUE){
 #' The mean and variance are taken from the local linear regression taken from the normal data, including age, sex and lens status as covariates.
 #' Variance is estimated with the [stats::predict.lm] function, assuming homoscedasticity in a non-weighted linear regression with equal variance or residuals.
 #' The estimated variance is (currently) equal to the prediction interval
-#'
+#' @param data data of
 #' @return named vector with mean deviation (MDev) and pattern standard deviation (PSD)
 #' @author tjebo
 #' @export
 MD_PSD <- function(data) {
   data <- data %>% filter(stimID != 0) # remove blind spot. Make sure this remains stimID for blind spot in maia import!!!
 
-  comparedat <- compare_norm(data, interval = "predict") %>%
+  comparedat <- compare_norm(testresults = data, interval = "predict") %>%
     mutate(pred_int = upr - lwr) %>%
     split(.$testID)
-  # return(comparedat)
   extractMD <- function(comparedat) {
     testval <- comparedat$value
     normval <- comparedat$fit
@@ -297,15 +299,13 @@ MD_PSD <- function(data) {
       mean(1 / normvar, na.rm = TRUE)
 
     PSD <- sqrt(mean(normvar, na.rm = TRUE) *
-                  (sum((testval - normval - MDev)^2 / normvar, na.rm = TRUE) / (length(normvar) - 1)))
+      (sum((testval - normval - MDev)^2 / normvar, na.rm = TRUE) / (length(normvar) - 1)))
 
-    result <- c(MeanDev = MDev, PSD = PSD)
-    result
+    MDresult <- data.frame(MeanDev = MDev, PSD = PSD, testtype = unique(comparedat$testtype))
+    MDresult
   }
   res_MD <- lapply(comparedat, extractMD) %>%
-    do.call(rbind, .) %>%
-    as.data.frame() %>%
-    rownames_to_column("testID")
+    bind_rows(.id = 'testID')
   res_MD
 }
 
@@ -362,3 +362,6 @@ MD_PSD_man <- function (test_val, norm_val, var_norm, data = NULL) {
 RMSE <- function(observed, predicted) {
   sqrt(mean((predicted - observed)^2, na.rm=TRUE))
 }
+
+
+

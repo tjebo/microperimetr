@@ -6,6 +6,9 @@
 \usage{
 MD_PSD(data)
 }
+\arguments{
+\item{data}{data of}
+}
 \value{
 named vector with mean deviation (MDev) and pattern standard deviation (PSD)
 }

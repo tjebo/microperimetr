@@ -4,16 +4,16 @@
 \alias{compare_norm}
 \title{compare_norm}
 \usage{
-compare_norm(data, interval = "confidence")
+compare_norm(testresults, interval = "confidence")
 }
 \arguments{
+\item{interval}{used in \link[stats:predict.lm]{stats::predict.lm}}
+
 \item{data}{\strong{required}. data frame with sensitivity values. See details.
 Data argument should be data frame only! List of data frames could result in unexpected output.
 The data frame is ideally taken directly from \link{read_maia} output, ideally joined with information on lens status. (not contained in read_maia() output!)
 It should at least contain following columns: \strong{patID, eye, testID, testtype, eccent, angle, value, stimID}
 It should ideally also contain \strong{age, sex and lens} - If not, defaults of age, sex and lens of \link{pred_location} will be used}
-
-\item{interval}{used in \link[stats:predict.lm]{stats::predict.lm}}
 }
 \value{
 list of data frames (for each testID) with original and predicted normal values.
