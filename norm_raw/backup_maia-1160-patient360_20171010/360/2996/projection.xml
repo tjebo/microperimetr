@@ -1,0 +1,273 @@
+<?xml version="1.0"?>
+<!DOCTYPE MitProjectionResults>
+<MitProjection>
+    <Header>
+        <SoftwareVersion>2.5.1</SoftwareVersion>
+        <MachineID>1160</MachineID>
+        <HardwareVersion>3</HardwareVersion>
+        <FirmwareVersion>0.71</FirmwareVersion>
+        <PatientID>360</PatientID>
+        <ExamID>2996</ExamID>
+        <ExamBaselineID>-1</ExamBaselineID>
+        <ExamType>6</ExamType>
+        <ExamBaselineType>0</ExamBaselineType>
+        <Completed>1</Completed>
+        <GridUsed>47</GridUsed>
+        <StrategyUsed>2</StrategyUsed>
+        <Eye>Right</Eye>
+        <DateTime>2017-10-10 10:03</DateTime>
+        <Age>66</Age>
+        <stimuliDuration_ms>200</stimuliDuration_ms>
+        <fieldDegreesX>36.50</fieldDegreesX>
+        <fieldDegreesY>36.50</fieldDegreesY>
+        <fixationCenterX>0.00</fixationCenterX>
+        <fixationCenterY>0.00</fixationCenterY>
+        <smallTargetDiam_deg>1.0</smallTargetDiam_deg>
+        <bigTargetDiam_deg>12.0</bigTargetDiam_deg>
+        <fixationUsed>3</fixationUsed>
+        <focusPos_mm>0.00</focusPos_mm>
+        <examDuration_s>612</examDuration_s>
+        <examPRLX_pix>-22.58</examPRLX_pix>
+        <examPRLY_pix>3.59</examPRLY_pix>
+        <baselinePRLX_pix>0.00</baselinePRLX_pix>
+        <baselinePRLY_pix>0.00</baselinePRLY_pix>
+        <baselineRotation_deg>0.00</baselineRotation_deg>
+        <baselineShiftX_pix>0</baselineShiftX_pix>
+        <baselineShiftY_pix>0</baselineShiftY_pix>
+        <wrongPressureEvents>4</wrongPressureEvents>
+        <averageReactionTime_ms>599</averageReactionTime_ms>
+        <AnalysisResults>
+            <NN_version>2.0</NN_version>
+            <averageSensitivity>22.39</averageSensitivity>
+            <normalSensitivityThreshold>13.00</normalSensitivityThreshold>
+            <abnormalSensitivityThreshold>7.00</abnormalSensitivityThreshold>
+            <fixationCMX_pix>-31.18</fixationCMX_pix>
+            <fixationCMY_pix>-6.06</fixationCMY_pix>
+            <fixationIndex1>0.64</fixationIndex1>
+            <fixationIndex2>0.88</fixationIndex2>
+            <fixationIndexFinal>37.98</fixationIndexFinal>
+            <BCEA probability="0.632" a_pix="32.9" b_pix="45.0" area_pix2="4654.7" angle_rad="-1.092"/>
+            <BCEA probability="0.950" a_pix="57.0" b_pix="77.8" area_pix2="13948.9" angle_rad="-1.092"/>
+            <normalAMDThreshold>-1</normalAMDThreshold>
+            <abnormalAMDThreshold>-1</abnormalAMDThreshold>
+        </AnalysisResults>
+    </Header>
+    <Stimuli>
+        <Stimulus id="29" final_intensity="-26" ray="5" angle_deg="90">
+            <history>-28,-24,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="35" final_intensity="-26" ray="5" angle_deg="270">
+            <history>-28,-24,-20,-16,-18,-20,-22,-24,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="26" final_intensity="-22" ray="5" angle_deg="0">
+            <history>-28,-24,-20,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="32" final_intensity="-22" ray="5" angle_deg="180">
+            <history>-28,-24,-20,-16,-18,-20,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="25" final_intensity="-22" ray="3" angle_deg="330">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="65" final_intensity="-22" ray="4" angle_deg="180">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="42" final_intensity="-22" ray="7" angle_deg="120">
+            <history>-30,-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="47" final_intensity="-26" ray="7" angle_deg="270">
+            <history>-30,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="50" final_intensity="-22" ray="9" angle_deg="0">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="21" final_intensity="-22" ray="3" angle_deg="210">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="18" final_intensity="-22" ray="3" angle_deg="120">
+            <history>-30,-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="67" final_intensity="-24" ray="6" angle_deg="180">
+            <history>-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="51" final_intensity="-24" ray="9" angle_deg="30">
+            <history>-26,-22,-18,-20,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="56" final_intensity="-22" ray="9" angle_deg="180">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="22" final_intensity="-26" ray="3" angle_deg="240">
+            <history>-30,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="14" final_intensity="-22" ray="3" angle_deg="0">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="33" final_intensity="-24" ray="5" angle_deg="210">
+            <history>-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="3" final_intensity="-18" ray="1" angle_deg="30">
+            <history>-26,-22,-18,-20,</history>
+        </Stimulus>
+        <Stimulus id="60" final_intensity="-22" ray="9" angle_deg="300">
+            <history>-30,-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="58" final_intensity="-26" ray="9" angle_deg="240">
+            <history>-30,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="10" final_intensity="-18" ray="1" angle_deg="240">
+            <history>-30,-26,-22,-18,-20,</history>
+        </Stimulus>
+        <Stimulus id="69" final_intensity="-26" ray="8" angle_deg="180">
+            <history>-26,-22,-24,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="55" final_intensity="-26" ray="9" angle_deg="150">
+            <history>-26,-30,-28,-26,</history>
+        </Stimulus>
+        <Stimulus id="28" final_intensity="-24" ray="5" angle_deg="60">
+            <history>-30,-34,-32,-30,-28,-26,-24,</history>
+        </Stimulus>
+        <Stimulus id="30" final_intensity="-24" ray="5" angle_deg="120">
+            <history>-30,-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="64" final_intensity="-22" ray="4" angle_deg="0">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="20" final_intensity="-22" ray="3" angle_deg="180">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="12" final_intensity="-22" ray="1" angle_deg="300">
+            <history>-30,-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="8" final_intensity="-10" ray="1" angle_deg="180">
+            <history>-26,-22,-18,-14,-10,-12,</history>
+        </Stimulus>
+        <Stimulus id="5" final_intensity="-18" ray="1" angle_deg="90">
+            <history>-30,-26,-22,-18,-20,</history>
+        </Stimulus>
+        <Stimulus id="53" final_intensity="-26" ray="9" angle_deg="90">
+            <history>-30,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="38" final_intensity="-20" ray="7" angle_deg="0">
+            <history>-26,-22,-18,-20,-22,</history>
+        </Stimulus>
+        <Stimulus id="9" final_intensity="-18" ray="1" angle_deg="210">
+            <history>-26,-22,-18,-20,</history>
+        </Stimulus>
+        <Stimulus id="37" final_intensity="-22" ray="5" angle_deg="330">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="71" final_intensity="-24" ray="10" angle_deg="180">
+            <history>-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="39" final_intensity="-24" ray="7" angle_deg="30">
+            <history>-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="46" final_intensity="-22" ray="7" angle_deg="240">
+            <history>-30,-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="57" final_intensity="-24" ray="9" angle_deg="210">
+            <history>-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="41" final_intensity="-24" ray="7" angle_deg="90">
+            <history>-30,-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="45" final_intensity="-24" ray="7" angle_deg="210">
+            <history>-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="54" final_intensity="-22" ray="9" angle_deg="120">
+            <history>-30,-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="2" final_intensity="-18" ray="1" angle_deg="0">
+            <history>-26,-22,-18,-20,</history>
+        </Stimulus>
+        <Stimulus id="36" final_intensity="-26" ray="5" angle_deg="300">
+            <history>-30,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="70" final_intensity="-12" ray="10" angle_deg="0">
+            <history>-26,-22,-18,-14,-10,-12,-14,</history>
+        </Stimulus>
+        <Stimulus id="24" final_intensity="-26" ray="3" angle_deg="300">
+            <history>-30,-26,-22,-24,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="68" final_intensity="-24" ray="8" angle_deg="0">
+            <history>-26,-30,-28,-26,-24,</history>
+        </Stimulus>
+        <Stimulus id="23" final_intensity="-32" ray="3" angle_deg="270">
+            <history>-30,-34,-32,</history>
+        </Stimulus>
+        <Stimulus id="63" final_intensity="-20" ray="2" angle_deg="180">
+            <history>-26,-22,-18,-20,-22,</history>
+        </Stimulus>
+        <Stimulus id="27" final_intensity="-24" ray="5" angle_deg="30">
+            <history>-26,-30,-28,-26,-24,</history>
+        </Stimulus>
+        <Stimulus id="4" final_intensity="-20" ray="1" angle_deg="60">
+            <history>-30,-26,-22,-18,-20,-22,</history>
+        </Stimulus>
+        <Stimulus id="44" final_intensity="-24" ray="7" angle_deg="180">
+            <history>-26,-30,-28,-26,-24,</history>
+        </Stimulus>
+        <Stimulus id="43" final_intensity="-24" ray="7" angle_deg="150">
+            <history>-26,-30,-28,-26,-24,</history>
+        </Stimulus>
+        <Stimulus id="52" final_intensity="-26" ray="9" angle_deg="60">
+            <history>-30,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="15" final_intensity="-28" ray="3" angle_deg="30">
+            <history>-26,-30,-28,</history>
+        </Stimulus>
+        <Stimulus id="7" final_intensity="-20" ray="1" angle_deg="150">
+            <history>-26,-22,-18,-14,-16,-18,-20,-22,</history>
+        </Stimulus>
+        <Stimulus id="19" final_intensity="-18" ray="3" angle_deg="150">
+            <history>-26,-22,-18,-20,</history>
+        </Stimulus>
+        <Stimulus id="62" final_intensity="-24" ray="2" angle_deg="0">
+            <history>-26,-30,-28,-26,-24,</history>
+        </Stimulus>
+        <Stimulus id="49" final_intensity="-22" ray="7" angle_deg="330">
+            <history>-26,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="40" final_intensity="-26" ray="7" angle_deg="60">
+            <history>-30,-26,-22,-24,-26,-28,</history>
+        </Stimulus>
+        <Stimulus id="16" final_intensity="-26" ray="3" angle_deg="60">
+            <history>-30,-34,-32,-30,-28,-26,</history>
+        </Stimulus>
+        <Stimulus id="61" final_intensity="-20" ray="9" angle_deg="330">
+            <history>-26,-22,-18,-20,-22,</history>
+        </Stimulus>
+        <Stimulus id="11" final_intensity="-16" ray="1" angle_deg="270">
+            <history>-30,-26,-22,-18,-14,-16,-18,</history>
+        </Stimulus>
+        <Stimulus id="34" final_intensity="-24" ray="5" angle_deg="240">
+            <history>-30,-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="59" final_intensity="-24" ray="9" angle_deg="270">
+            <history>-30,-26,-22,-18,-20,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="31" final_intensity="-24" ray="5" angle_deg="150">
+            <history>-26,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="6" final_intensity="-20" ray="1" angle_deg="120">
+            <history>-30,-26,-22,-18,-20,-22,</history>
+        </Stimulus>
+        <Stimulus id="17" final_intensity="-22" ray="3" angle_deg="90">
+            <history>-30,-26,-22,-18,-20,-22,-24,</history>
+        </Stimulus>
+        <Stimulus id="13" final_intensity="-20" ray="1" angle_deg="330">
+            <history>-26,-22,-18,-14,-16,-18,-20,-22,</history>
+        </Stimulus>
+        <Stimulus id="48" final_intensity="-24" ray="7" angle_deg="300">
+            <history>-30,-26,-22,-18,-20,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="1" final_intensity="-8" ray="0" angle_deg="0">
+            <history>-26,-22,-18,-14,-10,-6,-2,-4,-6,-8,-10,</history>
+        </Stimulus>
+        <Stimulus id="66" final_intensity="-24" ray="6" angle_deg="0">
+            <history>-26,-22,-18,-20,-22,-24,-26,</history>
+        </Stimulus>
+        <Stimulus id="0" final_intensity="0" ray="14.3831" angle_deg="18.7942" position="abs">
+            <history>0,0,0,0,0,0,0,0,0,0,</history>
+        </Stimulus>
+    </Stimuli>
+</MitProjection>
