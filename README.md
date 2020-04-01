@@ -52,250 +52,37 @@ testdata <- read_maia(folder = file.path(getwd(), "norm_raw"))
 #> 
 #>     flatten
 comparedat <- compare_norm(testdata)
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
 #> Loading required package: gstat
 #> Loading required package: sp
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
 #> [using ordinary kriging]
 #> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
 #> [using ordinary kriging]
 #> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
 #> [using ordinary kriging]
 #> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
 #> [using ordinary kriging]
 #> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-#> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
 #> [using ordinary kriging]
 #> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
 #> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
 #> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
 #> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
 #> [using ordinary kriging]
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in microperimetR::pred_location(age = age, sex = sex, lens = lens, :
-#> lens is not set - default lens 'natural' be used
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
 #> [using ordinary kriging]
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
-
-#> Warning in fit.variogram(object, x, fit.sills = fit.sills, fit.ranges =
-#> fit.ranges, : No convergence after 200 iterations: try different initial values?
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
+#> [using ordinary kriging]
 #> [using ordinary kriging]
 plot_MD(comparedat)
 ```
