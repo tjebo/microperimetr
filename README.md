@@ -1,25 +1,23 @@
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-microperimetR
-=============
+
+# microperimetR
 
 This package will help you work with microperimetry data.  
 It is built for centervue’s maia and compass devices.
 
-Features:
----------
+## Features
 
--   Extracting data from MAIA raw (tgz) files becomes as easy as pie.
--   Fully automated comparison of your visual field data with normdata
+  - Extracting data from MAIA raw (tgz) files becomes as easy as pie.
+  - Fully automated comparison of your visual field data with normdata
     from the literature.
--   microperimetR has functions for both location-dependent and
+  - microperimetR has functions for both location-dependent and
     location-independent visual field analysis. Because the normdata is
     interpolated for location-dependent analysis, any custom grid can be
     used for both types of analysis.
--   microperimetR also includes functions for some more or less common
+  - microperimetR also includes functions for some more or less common
     visualistaion of visual field data
 
-Example
--------
+## Example
 
 This is a basic example which shows you how to import your visual field
 data and plot the (estimated) mean deviation for each included test:
@@ -63,4 +61,4 @@ comparedat <- compare_norm(testdata)
 plot_MD(comparedat)
 ```
 
-![](README-example-1.png)
+![](README-example-1.png)<!-- -->
