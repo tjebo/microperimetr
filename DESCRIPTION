@@ -4,10 +4,12 @@ Title: Microperimetry analysis. MAIA (Macular integrity assessment) and Compass
 Version: 0.9.0
 Author: Tjebo Heeren and Maximilian Pfau and ... 
 Maintainer: Tjebo Heeren <tjebn@web.de>
-Description: This package will help you work with MAIA. 
-    It can extract data from MAIA raw files in a breeze.
-    It allows for microperimetry basic and advanced visual field analysis and some visualisation. 
-    It contains normal data and provides help for interpolation of retinal sensitivity for location-independent sensitivity comparisons. 
+Description: This package will help you work with microperimetry data.  
+    It is built for centervue's maia and compass devices. 
+    Extracting data from MAIA raw (tgz) files becomes as easy as pie.
+    Fully automated comparison of your visual field data with normdata from the literature. 
+    microperimetR has functions for both location-dependent and location-independent visual field analysis. Because the normdata is interpolated for location-dependent analysis, any custom grid can be used for both types of analysis. 
+    microperimetR also includes functions for some more or less common visualistaion of visual field data 
 Depends: tidyverse
 Suggested: jsonlite, lubridate, xml2, utils, sp, gstat
 License: GNU General Public License v3.0

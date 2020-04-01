@@ -7,6 +7,14 @@
 \description{
 For working with MAIA raw data
 }
+\section{plotting functions (TBC)}{
+NA
+}
+
+\section{statistics and summary functions (TBC)}{
+NA
+}
+
 \examples{
 # Guide to plotting normal sensitivity data
 # Includes linear regression lines

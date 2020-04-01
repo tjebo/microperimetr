@@ -4,6 +4,9 @@
 #' @name microperimetR
 #' @docType package
 #' @author Tjebo Heeren and Maximilian Pfau and ... TBC!
+#' @import tidyverse
+#' @section plotting functions (TBC)
+#' @section statistics and summary functions (TBC)
 #'
 #' @examples
 #' # Guide to plotting normal sensitivity data
