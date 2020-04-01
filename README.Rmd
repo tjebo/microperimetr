@@ -29,7 +29,7 @@ It is built for centervue's maia and compass devices.
 
 This is a basic example which shows you how to import your visual field data and plot the (estimated) mean deviation for each included test:
 
-```{r example, warning=FALSE}
+```{r example, warning=FALSE, message=FALSE}
 # save the tgz files from MAIA into your R working directory 
 # devtools::install_github(tjebo/microperimetR)
 library(microperimetR)
