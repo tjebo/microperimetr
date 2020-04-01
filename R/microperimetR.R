@@ -1,14 +1,19 @@
 #' microperimetR
-#'
-#' For working with MAIA raw data
+#' Microperimetry analysis for centervue's maia and compass data
 #' @name microperimetR
 #' @docType package
+#' @description This package will help you work with microperimetry data.
+#'It is built for centervue's maia and compass devices.
+#'    Extracting data from MAIA raw (tgz) files becomes as easy as pie.
+#'    Fully automated comparison of your visual field data with normdata from the literature.
+#'    microperimetR has functions for both location-dependent and location-independent visual field analysis. Because the normdata is interpolated for location-dependent analysis, any custom grid can be used for both types of analysis.
+#'    microperimetR also includes functions for some more or less common visualistaion of visual field data
 #' @author Tjebo Heeren and Maximilian Pfau and ... TBC!
-#' @import tidyverse
 #' @section plotting functions (TBC)
 #' @section statistics and summary functions (TBC)
 #'
 #' @examples
+#'
 #' # Guide to plotting normal sensitivity data
 #' # Includes linear regression lines
 #' ggplot(norm_data, aes(x = Age, y = value)) +

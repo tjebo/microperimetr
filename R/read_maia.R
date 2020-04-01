@@ -14,7 +14,7 @@
 #' @export
 
 read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetime") {
-  maiaR:::using("xml2", "lubridate", "utils", "tidyverse")
+  maiaR:::using("xml2", "lubridate", "tidyverse")
   # list of tgz files
   tgz_name <- file.path(folder, list.files(folder)[grepl(".tgz", list.files(folder))])
   # check if any tgz file exists
