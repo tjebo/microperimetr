@@ -21,7 +21,7 @@ Data frame
 The function will extract the anonymised data from the raw .tgz patient backup files of your MAIA device.
 }
 \examples{
-read_maia(folder = file.path(getwd(), "norm_raw"))
+# read_maia(folder = file.path(getwd(), "data-raw"))
 }
 \author{
 Tjebo

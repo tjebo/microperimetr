@@ -9,12 +9,14 @@
 #' @param incomplete set TRUE, if you want to see incomplete exams too
 #' @param timeclass either 'date' (date class) or 'datetime' (POSIXct class), for date and time of test
 #' @return Data frame
+#' @import dplyr
+#' @import tidyr
 #' @examples
-#' read_maia(folder = file.path(getwd(), "norm_raw"))
+#' # read_maia(folder = file.path(getwd(), "data-raw"))
 #' @export
 
 read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetime") {
-  maiaR:::using("xml2", "lubridate", "tidyverse")
+  using("xml2", "lubridate")
   # list of tgz files
   tgz_name <- file.path(folder, list.files(folder)[grepl(".tgz", list.files(folder))])
   # check if any tgz file exists
@@ -124,7 +126,7 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
     data_all <- data_all %>% mutate(testDate = lubridate::ymd_hm(testDate))
   }
   # use get_names to retrieve sex details of patients. and join with main data frame
-  pat_names <- microperimetR:::get_names(folder = folder) %>%
+  pat_names <- get_names(folder = folder) %>%
     select(patID, sex) %>% mutate(patID = as.character(patID))
   data_bind <- data_all %>% left_join(pat_names, by = 'patID') %>%
     select(patID, sex, everything())

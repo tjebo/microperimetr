@@ -26,27 +26,30 @@ interpolate_norm(
 
 \item{as_df}{FALSE (default): list of data frames will be returnedif TRUE, value of data frame will be returned.}
 
+\item{newgrid}{custom grid to be interpolated on. If not specified, regular grid will be interpolated with resolution given in grid_density}
+
 \item{grid_density}{resolution of interpolated grid in degress.}
 
 \item{graph}{if TRUE, the interpolation will be plotted for all test types}
 }
 \value{
-List of data frames with predicted results for grid for all test types
+List of data frames with predicted results for grid for all test types and plot if graph = TRUE
 }
 \description{
 Interpolates grid based on local predictions of normal data.
 }
 \examples{
-and plot if graph = TRUE
+
 # Tests were performed
- plot(gstat::variogramLine(fit_fit, 10), type='l')
- points(vario[,2:3], pch=20, col='red')
-LOOCV of data points from interpol_dat data
-x <- gstat::krige.cv(fit ~ 1, interpol_dat, interpol_dat, model = fit_fit, nfold = nrow(interpol_dat))
-RMSE(x$var1.pred,x$observed)
-vgm.fit
-plot(vgm, vgm.fit)
-sp::spplot(mes_ok_mean ["var1.pred"])
+# plot(gstat::variogramLine(fit_fit, 10), type='l')
+# points(vario[,2:3], pch=20, col='red')
+#LOOCV of data points from interpol_dat data
+#x <- gstat::krige.cv(fit ~ 1, interpol_dat, interpol_dat,
+#       model = fit_fit, nfold = nrow(interpol_dat))
+#RMSE(x$var1.pred,x$observed)
+#vgm.fit
+#plot(vgm, vgm.fit)
+#sp::spplot(mes_ok_mean ["var1.pred"])
 }
 \author{
 tjebo and max

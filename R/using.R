@@ -2,6 +2,7 @@
 #' @description internal function for test of package presence.
 #' @source https://stackoverflow.com/a/44660688/7941188
 #' @author SO user Matthew https://stackoverflow.com/users/4125693/matthew
+#' @param ... list of character strings for names to be tested
 #'
 using <- function(...) {
   libs <- unlist(list(...))
@@ -16,7 +17,7 @@ using <- function(...) {
     }
     libsmsg <- paste("The following packages could not be found: ", libsmsg, "\n\r\n\rInstall missing packages?", collapse = "")
     if (winDialog(type = c("yesno"), libsmsg) == "YES") {
-      install.packages(need)
+      utils::install.packages(need)
       lapply(need, require, character.only = TRUE)
     }
   }

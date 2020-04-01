@@ -16,8 +16,9 @@
 #'
 #' # Guide to plotting normal sensitivity data
 #' # Includes linear regression lines
-#' ggplot(norm_data, aes(x = Age, y = value)) +
-#'   geom_point(aes(x = Age, y = value, shape = lens), alpha = 0.05, show.legend = FALSE) +
+#' library(ggplot2)
+#' ggplot(norm_data, aes(x = age, y = value)) +
+#'   geom_point(aes(shape = lens), alpha = 0.05, show.legend = FALSE) +
 #'   facet_wrap(~ testtype) +
 #'   ylab("Sensitivity [dB]") +
 #'   xlab("Age [years]") +

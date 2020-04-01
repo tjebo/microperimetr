@@ -8,10 +8,10 @@ maia_palette <- c(red = '#ca0020', cyan = '#2166ac', mesopic = 'Grey35', cr_diff
 #' @description calculates empirical distribution of estimated mean deviation
 #' @return list for each test type
 #'
-ecdf_MD <- function() lapply(microperimetR:::summary_MDPSD, function(x) ecdf(x$MeanDev))
+ecdf_MD <- function() lapply(summary_MDPSD, function(x) stats::ecdf(x$MeanDev))
 
 #' ecdf_PSD
 #' @name ecdf_PSD
 #' @description calculates empirical distribution of estimated pattern standard deviation
 #' @return list for each test type
-ecdf_PSD <- function() lapply(microperimetR:::summary_MDPSD, function(x) ecdf(x$PSD))
+ecdf_PSD <- function() lapply(summary_MDPSD, function(x) stats::ecdf(x$PSD))

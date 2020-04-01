@@ -7,7 +7,7 @@
 #' @return List of plots which are bound together with the patchwork package.
 #' @author tjebo
 #' @examples
-#' testdata <- read_maia()
+#' testdata <- read_maia(folder = 'https://github.com/tjebo/microperimetR/data-raw')
 #' comparedat <- compare_norm(testdata)
 #' plot_MD(comparedat)
 #' @export
@@ -21,12 +21,12 @@ plot_MD <- function(testdata, quantiles = 0.1) {
   unique_type <- unique(testdata$testtype)
   names(unique_type) <- unique_type
 
-  list_norm_MD <- lapply(unique_type, function(x) microperimetR:::summary_MDPSD[[x]])
+  list_norm_MD <- lapply(unique_type, function(x) summary_MDPSD[[x]])
   norm_MD <- list_norm_MD %>%
     bind_rows(.id = "type") %>%
     mutate(type = factor(type, levels = c("mesopic", "red", "cyan", "cr_diff")))
 
-  quantframe_list <- lapply(list_norm_MD, function(x) enframe(quantile(x$MeanDev, probs = c(seq(0, 1, by = quantiles))))) %>%
+  quantframe_list <- lapply(list_norm_MD, function(x) enframe(stats::quantile(x$MeanDev, probs = c(seq(0, 1, by = quantiles))))) %>%
     bind_rows(.id = "type") %>%
     mutate(type = factor(type, levels = c("mesopic", "red", "cyan", "cr_diff"))) %>%
     group_by(type) %>%
@@ -73,9 +73,9 @@ plot_MD <- function(testdata, quantiles = 0.1) {
 #' @return List of plots which are bound together with the patchwork package.
 #' @author tjebo
 #' @examples
-#' testdata <- read_maia()
-#' comparedat <- compare_norm(testdata)
-#' plot_PSD(comparedat)
+#' # testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
+#' # comparedat <- compare_norm(testdata)
+#' # plot_PSD(norm_data)
 #' @export
 plot_PSD <- function(testdata, quantiles = 0.1) {
 
@@ -87,12 +87,12 @@ plot_PSD <- function(testdata, quantiles = 0.1) {
   unique_type <- unique(testdata$testtype)
   names(unique_type) <- unique_type
 
-  list_norm_PSD <- lapply(unique_type, function(x) microperimetR:::summary_MDPSD[[x]])
+  list_norm_PSD <- lapply(unique_type, function(x) summary_MDPSD[[x]])
   norm_PSD <- list_norm_PSD %>%
     bind_rows(.id = "type") %>%
     mutate(type = factor(type, levels = c("mesopic", "red", "cyan", "cr_diff")))
 
-  quantframe_list <- lapply(list_norm_PSD, function(x) enframe(quantile(x$PSD, probs = c(seq(0, 1, by = quantiles))))) %>%
+  quantframe_list <- lapply(list_norm_PSD, function(x) enframe(stats::quantile(x$PSD, probs = c(seq(0, 1, by = quantiles))))) %>%
     bind_rows(.id = "type") %>%
     mutate(type = factor(type, levels = c("mesopic", "red", "cyan", "cr_diff"))) %>%
     group_by(type) %>%

@@ -14,7 +14,6 @@
 #' @export
 
 pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = "confidence") {
-  microperimetR:::using("tidyverse")
 
   if (is.null(age)) {
     warning("age is not set - default age of 50 years will be used")
@@ -32,18 +31,18 @@ pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = "confi
   if (!lens %in% c("natural", "pseudo")) stop("lens needs to be either 'natural' or 'pseudo')")
   if (!sex %in% c("m", "f")) stop("sex needs to be either 'm' or 'f')")
 
-  split_vec <- interaction(microperimetR:::data_model$testtype, microperimetR:::data_model$position)
+  split_vec <- interaction(data_model$testtype, data_model$position)
 
   #  putting test and retest in two columns for linear modelling, icc and kendall calculation
-  data_list <- microperimetR:::data_model %>% split(f = split_vec)
+  data_list <- data_model %>% split(f = split_vec)
 
   # order list so that it has same order as unique splits
   data_list <- data_list[unique(split_vec)]
-  list_lm <- lapply(data_list, function(x) lm(MeanSens ~ age + lens + sex, data = x))
+  list_lm <- lapply(data_list, function(x) stats::lm(MeanSens ~ age + lens + sex, data = x))
 
   newdata <- data.frame(age = age, sex = sex, lens = lens)
 
-  res_pred <- lapply(list_lm, function(x) predict(x, newdata = newdata, interval = interval))
+  res_pred <- lapply(list_lm, function(x) stats::predict(x, newdata = newdata, interval = interval))
   res_pred <- do.call(rbind, lapply(res_pred, unlist))
   rownames(res_pred) <- names(list_lm)
 
@@ -66,25 +65,27 @@ pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = "confi
 #' @param lens lens status. must be either 'natural' (default) or 'pseudo'. passed to \link{pred_location}
 #' @param interval used in \link[stats]{predict.lm}
 #' @param as_df FALSE (default): list of data frames will be returnedif TRUE, value of data frame will be returned.
+#' @param newgrid custom grid to be interpolated on. If not specified, regular grid will be interpolated with resolution given in grid_density
 #' @param grid_density resolution of interpolated grid in degress.
 #' @param graph if TRUE, the interpolation will be plotted for all test types
 #'
-#' @return List of data frames with predicted results for grid for all test types
+#' @return List of data frames with predicted results for grid for all test types and plot if graph = TRUE
 #' @examples
-#' and plot if graph = TRUE
+#'
 #' # Tests were performed
-#'  plot(gstat::variogramLine(fit_fit, 10), type='l')
-#'  points(vario[,2:3], pch=20, col='red')
-#' LOOCV of data points from interpol_dat data
-#' x <- gstat::krige.cv(fit ~ 1, interpol_dat, interpol_dat, model = fit_fit, nfold = nrow(interpol_dat))
-#' RMSE(x$var1.pred,x$observed)
-#' vgm.fit
-#' plot(vgm, vgm.fit)
-#' sp::spplot(mes_ok_mean ["var1.pred"])
+#' # plot(gstat::variogramLine(fit_fit, 10), type='l')
+#' # points(vario[,2:3], pch=20, col='red')
+#' #LOOCV of data points from interpol_dat data
+#' #x <- gstat::krige.cv(fit ~ 1, interpol_dat, interpol_dat,
+#' #       model = fit_fit, nfold = nrow(interpol_dat))
+#' #RMSE(x$var1.pred,x$observed)
+#' #vgm.fit
+#' #plot(vgm, vgm.fit)
+#' #sp::spplot(mes_ok_mean ["var1.pred"])
 #' @export
 #'
 interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "confidence", as_df = FALSE, newgrid = NULL, grid_density = 0.2, graph = FALSE) {
-  microperimetR:::using("tidyverse", "gstat", "sp")
+  using("gstat", "sp")
 
   # x - y coordinates
   results <- microperimetR::pred_location(age = age, sex = sex, lens = lens, interval = interval) %>%
@@ -168,7 +169,7 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
 #' @description Interpolates grid based on local predictions of normal data.
 #' For test points that correspond with basic normal grid, the values from \link{pred_location} will be used.
 #' For test points outside the normal grid location, values from \link{interpolate_norm} will be used
-#' @param data **required**. data frame with sensitivity values. See details.
+#' @param testresults **required**. data frame with sensitivity values. See details.
 #' Data argument should be data frame only! List of data frames could result in unexpected output.
 #' The data frame is ideally taken directly from [read_maia] output, ideally joined with information on lens status. (not contained in read_maia() output!)
 #' It should at least contain following columns: **patID, eye, testID, testtype, eccent, angle, value, stimID**
@@ -178,10 +179,9 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
 #' @return list of data frames (for each testID) with original and predicted normal values.
 #' @export
 compare_norm <- function(testresults, interval = "predict") {
-  maiaR:::using("tidyverse")
   test_list <- testresults %>% split(., testresults$testID)
 
-  test_locations <- as.character(unique(microperimetR:::data_model$position))
+  test_locations <- as.character(unique(data_model$position))
 
   run_list <- function(test_data) {
     ident_loc <- test_data[paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ] %>% select(-testID)
@@ -235,17 +235,16 @@ compare_norm <- function(testresults, interval = "predict") {
 #' @name CoR_maia
 #' @description Coefficient of repeatability of norm data
 #' Calculated with formula \eqn{CoR = 1.96* \sqrt2*\sqrt(within-subject-variance)}
-#'
 #' @author tjebo
 #'
 #' @param graph if TRUE, bland altman plot will be printed (with error lines at +/- 1.96*sd)
-#'
+#' @import dplyr
+#' @import tidyr
 #' @return Data frame with coefficients of repeatability for all test types
 #' and plot if graph = TRUE
 #' @export
 #'
 CoR_maia <- function(graph = TRUE){
-  microperimetR:::using('tidyverse')
 
   data_wide <- microperimetR::norm_data %>%
     mutate(testnumber = paste0("E", testnumber)) %>%
@@ -255,11 +254,11 @@ CoR_maia <- function(graph = TRUE){
 
   CoR <- data_wide %>%
     group_by(testtype) %>%
-    summarise(subj_sd = sd(diff_val, na.rm = TRUE), CoR = 1.96*sqrt(2)*subj_sd)
+    summarise(subj_sd = stats::sd(diff_val, na.rm = TRUE), CoR = 1.96*sqrt(2)*subj_sd)
 
   sample_df <- data_wide %>% select(testtype, E1, E2, diff_val, avg)
   mean_diff <- mean(sample_df$diff_val, na.rm = TRUE)
-  sd_diff <-  sd(sample_df$diff_val, na.rm = TRUE)
+  sd_diff <-  stats::sd(sample_df$diff_val, na.rm = TRUE)
 
   p <- ggplot(sample_df, aes(x = avg, y = diff_val, group = testtype)) +
     geom_point(alpha = 0.1, position = position_jitter()) +

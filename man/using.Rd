@@ -9,6 +9,9 @@ https://stackoverflow.com/a/44660688/7941188
 \usage{
 using(...)
 }
+\arguments{
+\item{...}{list of character strings for names to be tested}
+}
 \description{
 internal function for test of package presence.
 }

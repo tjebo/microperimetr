@@ -4,13 +4,13 @@
 #' @description Internal function to extract name, dob and and sex from MAIA observers.
 #' This data is stored in json files attached to the microperimetry files.
 #' It is generally not recommended to use this function explicitely in order to keep personal identifiable data as safe as possible.
-#'
+#' @import dplyr
 #' @author Tjebo
 #' @param folder source folder which is searched for .tgz files. Default: workdirectory
 #' @return Data frame
 #'
 get_names <- function(folder = getwd()){
-  microperimetR:::using('tidyverse', 'jsonlite','utils')
+  using('jsonlite','utils')
 
   tgz_name <- file.path(folder, list.files(folder)[grepl(".tgz", list.files(folder))])
   # check if any tgz file exists
@@ -36,7 +36,7 @@ get_names <- function(folder = getwd()){
 
   }  ##end of pull_out() function to use for list of tgz files
 
-  data_names <- dplyr::bind_rows(lapply(tgz_name, pull_out)) %>%
+  data_names <- bind_rows(lapply(tgz_name, pull_out)) %>%
     mutate(sex = case_when(sex == 'male' ~ 'm',
                            sex == 'female' ~ 'f',
                            TRUE ~ NA_character_))

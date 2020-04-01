@@ -13,7 +13,7 @@
 #' @export
 
 get_age <- function(from_date, to_date = lubridate::now(), dec = FALSE) {
-  microperimetR:::using('lubridate')
+  using('lubridate')
   if (is.character(from_date))
     from_date <- lubridate::as_date(from_date)
   if (is.character(to_date))
