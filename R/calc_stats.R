@@ -177,7 +177,7 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
 #' @author tjebo
 #' @return list of data frames (for each testID) with original and predicted normal values.
 #' @export
-compare_norm <- function(testresults, interval = "confidence") {
+compare_norm <- function(testresults, interval = "predict") {
   maiaR:::using("tidyverse")
   test_list <- testresults %>% split(., testresults$testID)
 
@@ -286,8 +286,14 @@ CoR_maia <- function(graph = TRUE){
 #' @export
 MD_PSD <- function(data) {
   data <- data %>% filter(stimID != 0) # remove blind spot. Make sure this remains stimID for blind spot in maia import!!!
+if(all(c('fit','lwr','upr') %in% names(data))){
+  if(sum(is.na(c(data$fit, data$lwr, data$upr))>0)) stop('there are missing values in your fitted values. Pass data without missing values')
+  comparedat <- data
+} else {
+  comparedat <- compare_norm(testresults = data, interval = "predict")
+}
 
-  comparedat <- compare_norm(testresults = data, interval = "predict") %>%
+  comparedat <- comparedat %>%
     mutate(pred_int = upr - lwr) %>%
     split(.$testID)
   extractMD <- function(comparedat) {
@@ -301,7 +307,7 @@ MD_PSD <- function(data) {
     PSD <- sqrt(mean(normvar, na.rm = TRUE) *
       (sum((testval - normval - MDev)^2 / normvar, na.rm = TRUE) / (length(normvar) - 1)))
 
-    MDresult <- data.frame(MeanDev = MDev, PSD = PSD, testtype = unique(comparedat$testtype))
+    MDresult <- data.frame(MeanDev = MDev, PSD = PSD, testtype = unique(comparedat$testtype), stringsAsFactors = FALSE)
     MDresult
   }
   res_MD <- lapply(comparedat, extractMD) %>%

@@ -4,7 +4,7 @@
 \alias{compare_norm}
 \title{compare_norm}
 \usage{
-compare_norm(testresults, interval = "confidence")
+compare_norm(testresults, interval = "predict")
 }
 \arguments{
 \item{interval}{used in \link[stats:predict.lm]{stats::predict.lm}}
