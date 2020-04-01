@@ -33,7 +33,7 @@ This is a basic example which shows you how to import your visual field data and
 # save the tgz files from MAIA into your R working directory 
 # devtools::install_github(tjebo/microperimetR)
 library(microperimetR)
-read_maia(folder = file.path(getwd(), "norm_raw"))
+testdata <- read_maia(folder = file.path(getwd(), "norm_raw"))
 comparedat <- compare_norm(testdata)
 plot_MD(comparedat)
 ```
