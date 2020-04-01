@@ -20,11 +20,11 @@ It is built for centervue’s maia and compass devices.
 ## Example
 
 This is a basic example which shows you how to import your visual field
-data and plot the (estimated) mean deviation for each included test:
+data and plot the (estimated) mean deviation for each included
+test:
 
 ``` r
-# save the tgz files from MAIA into your R working directory 
-# devtools::install_github(tjebo/microperimetR)
+# save the tgz files from MAIA patient backup into any directory, here "norm_raw", which is a folder in the working directory 
 library(microperimetR)
 testdata <- read_maia(folder = file.path(getwd(), "norm_raw"))
 comparedat <- compare_norm(testdata)
@@ -34,4 +34,19 @@ comparedat <- compare_norm(testdata)
 plot_MD(comparedat)
 ```
 
-![](README-unnamed-chunk-2-1.png)<!-- -->
+![](README-plot_MD-1.png)<!-- --> \#\# Installation
+
+``` r
+# for the development version 
+devtools::install_github(tjebo/microperimetR)
+```
+
+## Sources
+
+Norm data was used from Jonathan Denniss and Maximilian Pfau. The raw
+data from Denniss et al. [has been made available
+online](https://www.sciencedirect.com/science/article/pii/S2352340916304978)
+.
+
+The accompanying paper in IOVS can be found on
+<http://iovs.arvojournals.org/article.aspx?articleid=2571342>

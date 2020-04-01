@@ -35,7 +35,7 @@ library(microperimetR)
 testdata <- read_maia(folder = file.path(getwd(), "norm_raw"))
 comparedat <- compare_norm(testdata)
 ```
-```{r}
+```{r plot_MD}
 plot_MD(comparedat)
 ```
 ## Installation 
@@ -49,8 +49,3 @@ Norm data was used from Jonathan Denniss and Maximilian Pfau. The raw data from 
 
 The accompanying paper in IOVS can be found on http://iovs.arvojournals.org/article.aspx?articleid=2571342
 
-#!/bin/bash
-if [[ README.Rmd -nt README.md ]]; then
-  echo "README.md is out of date; please re-knit README.Rmd"
-  exit 1
-fi 

@@ -52,14 +52,14 @@ plot_MD <- function(testdata, quantiles = 0.1) {
       hjust = c(rep(c(0, 1), length(quantframe_list$value) / 2), 0)
     ) +
     scale_color_manual(values = maia_palette, guide = FALSE) +
-    scale_y_continuous(breaks = seq(0, 15, 5)) +
+    scale_y_continuous(breaks = c(0,5,10)) +
     labs(y = "Count of normals") +
-    coord_cartesian(ylim = c(0, 17.5), clip = "off") +
+    coord_cartesian(ylim = c(0, 10), clip = "off") +
     facet_wrap(~type, scales = "free_x") +
     theme_min() +
     theme(
       plot.margin = margin(t = 20, unit = "pt"),
-      strip.text = element_text(margin = margin(b = 30, unit = "pt"), hjust = 0)
+      strip.text = element_text(margin = margin(b = 30, unit = "pt"), hjust = 0, size = 11)
     )
   p
 }
@@ -125,7 +125,7 @@ plot_PSD <- function(testdata, quantiles = 0.1) {
     theme_min() +
     theme(
       plot.margin = margin(t = 20, unit = "pt"),
-      strip.text = element_text(margin = margin(b = 30, unit = "pt"), hjust = 0)
+      strip.text = element_text(margin = margin(b = 30, unit = "pt"), hjust = 0, size = 11)
     )
   p
 }
