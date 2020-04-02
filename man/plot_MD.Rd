@@ -19,9 +19,9 @@ List of plots which are bound together with the patchwork package.
 plotting relative percentile of estimated Mean deviation for tested observers
 }
 \examples{
-testdata <- read_maia(folder = 'https://github.com/tjebo/microperimetR/data-raw')
-comparedat <- compare_norm(testdata)
-plot_MD(comparedat)
+#testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
+#comparedat <- compare_norm(testdata)
+#plot_MD(comparedat)
 }
 \author{
 tjebo

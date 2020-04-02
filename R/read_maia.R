@@ -16,7 +16,6 @@
 #' @export
 
 read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetime") {
-  using("xml2", "lubridate")
   # list of tgz files
   tgz_name <- file.path(folder, list.files(folder)[grepl(".tgz", list.files(folder))])
   # check if any tgz file exists
@@ -26,7 +25,7 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
   # pull_out will be lapplied on the list of tgz files
   pull_out <- function(tgz_element) { # tgz_element is element of tgz_name (each tgz file)
     tmpdir <- tempdir()
-    patID <- str_extract(tgz_element, "(?i)(?<=patient)\\d+")
+    patID <- stringr::str_extract(tgz_element, "(?i)(?<=patient)\\d+")
     utils::untar(tgz_element, exdir = tmpdir)
     tmpdir_patID <- paste0(tmpdir, "/", patID)
     ## dir of the files within the patID folder, make object patID for subenvironment

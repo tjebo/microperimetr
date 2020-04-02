@@ -1,0 +1,4 @@
+<!DOCTYPE MaiaActiveFixationTargets>
+<ExamActiveTargets>
+    <FixationTarget size_deg="1" x_deg="0" y_deg="0" id="0" shape="smallTarget" mask="0x40000" />
+</ExamActiveTargets>

@@ -48,10 +48,10 @@ pred_location <- function(age = NULL, sex = NULL, lens = NULL, interval = "confi
 
   results <- res_pred %>%
     as.data.frame() %>%
-    rownames_to_column("test.position") %>%
-    separate(test.position, c("testtype", "position"), sep = "\\.") %>%
-    separate(position, c("eccent", "angle")) %>%
-    mutate_at(.vars = vars(eccent, angle), .funs = "as.numeric")
+    tibble::rownames_to_column("test.position") %>%
+    separate(.data$test.position, c("testtype", "position"), sep = "\\.") %>%
+    separate(.data$position, c("eccent", "angle")) %>%
+    mutate_at(.vars = vars(.data$eccent, .data$angle), .funs = "as.numeric")
   return(results)
 }
 
@@ -88,17 +88,17 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
   using("gstat", "sp")
 
   # x - y coordinates
-  results <- microperimetR::pred_location(age = age, sex = sex, lens = lens, interval = interval) %>%
+  results <- pred_location(age = age, sex = sex, lens = lens, interval = interval) %>%
     mutate(
-      angle = as.integer(angle),
-      x = cos(angle * pi / 180) * as.numeric(eccent),
-      y = sin(angle * pi / 180) * as.numeric(eccent)
+      angle = as.integer(.data$angle),
+      x = cos(.data$angle * pi / 180) * as.numeric(.data$eccent),
+      y = sin(.data$angle * pi / 180) * as.numeric(.data$eccent)
     )
   # create grid
   if (!is.null(newgrid)) {
-    dense_grid <- newgrid %>% select(eccent, angle) %>%
-      mutate(x = cos(angle * pi / 180) * as.numeric(eccent),
-             y = sin(angle * pi / 180) * as.numeric(eccent))
+    dense_grid <- newgrid %>% select('eccent', 'angle') %>%
+      mutate(x = cos(.data$angle * pi / 180) * as.numeric(.data$eccent),
+             y = sin(.data$angle * pi / 180) * as.numeric(.data$eccent))
     sp_grid <- dense_grid
     sp::coordinates(sp_grid) <- ~ x + y} else if (is.null(newgrid)) {
     dense_grid <- expand.grid(x = seq(-10, 10, by = grid_density), y = seq(-10, 10, by = grid_density))
@@ -108,15 +108,16 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
   }
 
   # if no testdata given, will always produce prediction for all testtypes!!!
-  # Don't get confused in the other fucntions which may get the entire set as an intermediate outpu
+
   if (is.null(newgrid)) {
   list_res <- results %>% split(results$testtype)
 } else {
-  list_res <- filter(results, testtype == unique(newgrid$testtype)) %>% split(.$testtype)
+  list_res <- filter(results, testtype == unique(newgrid$testtype))
+  list_res <- split(list_res, list_res$testtype)
 }
 
   interpolate_predictions <- function(dat) {
-    interpol_dat <- dat %>% select(x, y, "fit", "lwr")
+    interpol_dat <- dat %>% select('x', 'y', 'fit', 'lwr')
     sp::coordinates(interpol_dat) <- ~ x + y
 
     # fit with inverted distance weighting
@@ -136,22 +137,21 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
       val_pred = mes_fit$var1.pred, val_var = mes_fit$var1.var,
       lwr_pred = mes_lwr$var1.pred, lwr_var = mes_lwr$var1.var
     ) %>%
-      mutate(upr_pred = val_pred + (val_pred - lwr_pred))
+      mutate(upr_pred = .data$val_pred + (.data$val_pred - .data$lwr_pred))
     output
   }
 
   norm_interpolated <- lapply(list_res, interpolate_predictions)
 
-  if (as_df) norm_interpolated <- norm_interpolated %>% bind_rows(.id = 'testtype')
 
   if (graph) {
     plot_list <- list()
-    for (i in 1:length(res_interpol)) {
-      p <- ggplot(res_interpol[[i]], aes(x, y)) +
+    for (i in 1:length(norm_interpolated)) {
+      p <- ggplot(norm_interpolated[[i]], aes(x, y)) +
         geom_raster(aes(fill = val_pred)) +
         stat_contour(aes(z = val_pred), binwidth = 1, size = 0.1, color = "black") +
         scale_fill_gradient(limits = c(-30, 30), low = "black", high = "white") +
-        labs(title = names(res_interpol)[i], x = "Temporal - nasal [1]", y = "Inferior - superior [1]", fill = "Sensitivity [dB]") +
+        labs(title = names(norm_interpolated)[i], x = "Temporal - nasal [1]", y = "Inferior - superior [1]", fill = "Sensitivity [dB]") +
         coord_equal() +
         theme_min()
       plot_list[[i]] <- p
@@ -159,6 +159,8 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
 
     p_wrap <- patchwork::wrap_plots(plot_list, guides = "collect")
     print(p_wrap)
+
+  if (as_df) norm_interpolated <- norm_interpolated %>% bind_rows(.id = 'testtype')
   }
 
   return(norm_interpolated)
@@ -175,17 +177,18 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
 #' It should at least contain following columns: **patID, eye, testID, testtype, eccent, angle, value, stimID**
 #' It should ideally also contain **age, sex and lens** - If not, defaults of age, sex and lens of \link{pred_location} will be used
 #' @param interval used in [stats::predict.lm]
+#' @import dplyr
 #' @author tjebo
 #' @return list of data frames (for each testID) with original and predicted normal values.
 #' @export
 compare_norm <- function(testresults, interval = "predict") {
-  test_list <- testresults %>% split(., testresults$testID)
+  test_list <- split(testresults, testresults$testID)
 
-  test_locations <- as.character(unique(data_model$position))
+  test_locations <- as.character(unique(:data_model$position))
 
   run_list <- function(test_data) {
-    ident_loc <- test_data[paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ] %>% select(-testID)
-    non_ident_loc <- test_data[!paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ] %>% select(-testID)
+    ident_loc <- test_data[paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ] %>% select(-'testID')
+    non_ident_loc <- test_data[!paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ] %>% select(-'testID')
 
     if ("age" %in% names(test_data)) {
       age <- as.numeric(unique(test_data$age))
@@ -204,33 +207,32 @@ compare_norm <- function(testresults, interval = "predict") {
       lens <- NULL
     }
 
-    results <- microperimetR::pred_location(age = age, sex = sex, lens = lens, interval = interval) %>%
+    results <- pred_location(age = age, sex = sex, lens = lens, interval = interval) %>%
       mutate(
-        angle = as.integer(angle),
-        x = cos(angle * pi / 180) * as.numeric(eccent),
-        y = sin(angle * pi / 180) * as.numeric(eccent)
+        angle = as.integer(.data$angle),
+        x = cos(.data$angle * pi / 180) * as.numeric(.data$eccent),
+        y = sin(.data$angle * pi / 180) * as.numeric(.data$eccent)
       )
     ident_norm_pred <- results %>% right_join(ident_loc, by = c("eccent", "angle", "testtype"))
 
     if (nrow(non_ident_loc) > 0) {
-      nonident_norm_pred <- interpolate_norm(
-        age = age, lens = lens, sex = sex, interval = interval,
-        newgrid = non_ident_loc, as_df = TRUE
-      ) %>%
-        select(testtype, eccent, angle, fit = val_pred, lwr = lwr_pred, upr = upr_pred) %>%
+      nonident_norm_pred <- interpolate_norm(age = age, lens = lens, sex = sex, interval = interval,
+        newgrid = non_ident_loc, as_df = TRUE ) %>%
+    return(nonident_norm_pred)
+        select('testtype', 'eccent', 'angle', fit = 'val_pred', lwr = 'lwr_pred', upr = 'upr_pred') %>%
         right_join(non_ident_loc, by = c("testtype", "eccent", "angle"))
       new_frame <- bind_rows(ident_norm_pred, nonident_norm_pred)
     } else {
       new_frame <- ident_norm_pred
     }
 
-    new_frame <- new_frame %>% select(patID, sex, age, eye, testtype, eccent, angle, stimID, value, fit, lwr, upr)
+    new_frame <- new_frame[c('patID', 'sex', 'age', 'eye', 'testtype', 'eccent', 'angle', 'stimID', 'value', 'fit', 'lwr', 'upr')]
   }
-  list_res <- lapply(test_list, run_list) %>% bind_rows(.id = "testID")
+  list_res <- lapply(test_list, run_list)
+  # %>% bind_rows(.id = "testID")
 
   list_res
 }
-
 #' CoR_maia
 #' @name CoR_maia
 #' @description Coefficient of repeatability of norm data
@@ -240,29 +242,30 @@ compare_norm <- function(testresults, interval = "predict") {
 #' @param graph if TRUE, bland altman plot will be printed (with error lines at +/- 1.96*sd)
 #' @import dplyr
 #' @import tidyr
+#' @importFrom rlang .data
 #' @return Data frame with coefficients of repeatability for all test types
 #' and plot if graph = TRUE
 #' @export
 #'
 CoR_maia <- function(graph = TRUE){
 
-  data_wide <- microperimetR::norm_data %>%
-    mutate(testnumber = paste0("E", testnumber)) %>%
-    select(-testID) %>%
+  data_wide <- norm_data %>%
+    mutate(testnumber = paste0("E", .data$testnumber)) %>%
+    select(-'testID') %>%
     pivot_wider(names_from = 'testnumber', values_from = 'value') %>%
-    mutate(diff_val = E1-E2, avg = (E1+E2)/2)
+    mutate(diff_val = .data$E1-.data$E2, avg = (.data$E1+.data$E2)/2)
 
   CoR <- data_wide %>%
-    group_by(testtype) %>%
-    summarise(subj_sd = stats::sd(diff_val, na.rm = TRUE), CoR = 1.96*sqrt(2)*subj_sd)
+    group_by(.data$testtype) %>%
+    summarise(subj_sd = stats::sd(.data$diff_val, na.rm = TRUE), CoR = 1.96*sqrt(2)*.data$subj_sd)
 
-  sample_df <- data_wide %>% select(testtype, E1, E2, diff_val, avg)
+  sample_df <- data_wide %>% select('testtype', 'E1', 'E2', 'diff_val', 'avg')
   mean_diff <- mean(sample_df$diff_val, na.rm = TRUE)
   sd_diff <-  stats::sd(sample_df$diff_val, na.rm = TRUE)
 
-  p <- ggplot(sample_df, aes(x = avg, y = diff_val, group = testtype)) +
+  p <- ggplot(sample_df, aes(x = .data$avg, y = .data$diff_val, group = .data$testtype)) +
     geom_point(alpha = 0.1, position = position_jitter()) +
-    facet_wrap(~ testtype, scales = 'free') +
+    facet_wrap(~ .data$testtype, scales = 'free') +
     geom_hline(yintercept = mean_diff, size = 0.5) +
     geom_hline(yintercept = c(mean_diff - (1.96 * sd_diff), mean_diff + (1.96 * sd_diff)), linetype = 2, size = 0.5) +
     labs(x = 'Mean [dB]', y = "Difference [dB]") +
@@ -284,7 +287,7 @@ CoR_maia <- function(graph = TRUE){
 #' @author tjebo
 #' @export
 MD_PSD <- function(data) {
-  data <- data %>% filter(stimID != 0) # remove blind spot. Make sure this remains stimID for blind spot in maia import!!!
+  data <- data %>% filter(.data$stimID != 0) # remove blind spot. Make sure this remains stimID for blind spot in maia import!!!
 if(all(c('fit','lwr','upr') %in% names(data))){
   if(sum(is.na(c(data$fit, data$lwr, data$upr))>0)) stop('there are missing values in your fitted values. Pass data without missing values')
   comparedat <- data
@@ -292,9 +295,8 @@ if(all(c('fit','lwr','upr') %in% names(data))){
   comparedat <- compare_norm(testresults = data, interval = "predict")
 }
 
-  comparedat <- comparedat %>%
-    mutate(pred_int = upr - lwr) %>%
-    split(.$testID)
+  comparedat <-  mutate(comparedat, pred_int = .data$upr - .data$lwr)
+  comparedat <- split(comparedat, comparedat$testID)
   extractMD <- function(comparedat) {
     testval <- comparedat$value
     normval <- comparedat$fit

@@ -10,8 +10,6 @@
 #' @return Data frame
 #'
 get_names <- function(folder = getwd()){
-  using('jsonlite','utils')
-
   tgz_name <- file.path(folder, list.files(folder)[grepl(".tgz", list.files(folder))])
   # check if any tgz file exists
   if (identical(tgz_name, character(0))) {
@@ -21,7 +19,7 @@ get_names <- function(folder = getwd()){
     #tgz_element is element of tgz_name (each tgz file), and pull_out will be used with lapply to perform the whole lot on every tgz file
 
     tmpdir <- tempdir()
-    patID <- str_extract(tgz_element, "(?i)(?<=patient)\\d+")
+    patID <- stringr::str_extract(tgz_element, "(?i)(?<=patient)\\d+")
     utils::untar(tgz_element, exdir = tmpdir)
     tmpdir_patID <- paste0(tmpdir,'/',patID)
     ##dir of the files within the patID folder, makes object patID for the following code

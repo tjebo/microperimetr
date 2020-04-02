@@ -7,14 +7,14 @@
 #' @return List of plots which are bound together with the patchwork package.
 #' @author tjebo
 #' @examples
-#' testdata <- read_maia(folder = 'https://github.com/tjebo/microperimetR/data-raw')
-#' comparedat <- compare_norm(testdata)
-#' plot_MD(comparedat)
+#' #testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
+#' #comparedat <- compare_norm(testdata)
+#' #plot_MD(comparedat)
 #' @export
 plot_MD <- function(testdata, quantiles = 0.1) {
 
-  MD_list <- MD_PSD(testdata) %>%
-    split(.$testtype) %>%
+  MD_list <- MD_PSD(testdata)
+  MD_list <- split(MD_list, MD_list$testtype) %>%
     bind_rows(.id = "type") %>%
     mutate(type = factor(type, levels = c("mesopic", "red", "cyan", "cr_diff")))
 

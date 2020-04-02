@@ -1,4 +1,4 @@
-Package: microperimetR
+Package: microperimetr
 Type: Package
 Title: Microperimetry analysis for centervue's maia and compass data 
 Version: 0.0.0.9000
@@ -10,18 +10,22 @@ Description: This package will help you work with microperimetry data.
     It is built for centervue's maia and compass devices. 
     Extracting data from MAIA raw (tgz) files becomes as easy as pie.
     Fully automated comparison of your visual field data with normdata from the literature. 
-    microperimetR has functions for both location-dependent and location-independent visual field analysis. Because the normdata is interpolated for location-dependent analysis, any custom grid can be used for both types of analysis. 
-    microperimetR also includes functions for some more or less common visualistaion of visual field data.
+    microperimetr has functions for both location-dependent and location-independent visual field analysis. Because the normdata is interpolated for location-dependent analysis, any custom grid can be used for both types of analysis. 
+    microperimetr also includes functions for some more or less common visualistaion of visual field data.
 Imports: 
     dplyr (>= 0.8.5),
-    tidyr (>= 1.0.2),
     ggplot2 (>= 3.3.0),
-    jsonlite (>= 1.6.1), 
     gstat (>= 2.0-4),
-    sp (>= 1.4-1), 
-    xml2 (>= 1.2.5),
+    jsonlite (>= 1.6.1), 
     lubridate (>= 1.7.4),
-    patchwork (>= 1.0.0)
+    magrittr (>= 1.5),
+    patchwork (>= 1.0.0),
+    rlang (>= 0.4.5),
+    sp (>= 1.4-1), 
+    stringr (>= 1.4.0),
+    tibble (>= 2.1.3),
+    tidyr (>= 1.0.2),
+    xml2 (>= 1.2.5),
 Depends: R (>= 3.6.0)
 License: MIT + file LICENSE
 Encoding: UTF-8
