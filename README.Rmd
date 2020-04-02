@@ -31,13 +31,12 @@ This is a basic example which shows you how to import your visual field data and
 
 ```{r example, warning=FALSE, message=FALSE, results='hide'}
 # save the tgz files from MAIA patient backup into any directory, here "norm_raw", which is a folder in the working directory 
-library(microperimetr)
-testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
-comparedat <- compare_norm(testdata)
+# library(microperimetr)
+# testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
+# comparedat <- compare_norm(testdata)
 ```
 ```{r plot_MD}
-plot_MD(comparedat)
-getwd()
+# plot_MD(comparedat)
 ```
 
 ## Installation 

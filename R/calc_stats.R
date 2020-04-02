@@ -184,7 +184,7 @@ interpolate_norm <- function(age = NULL, sex = NULL, lens = NULL, interval = "co
 compare_norm <- function(testresults, interval = "predict") {
   test_list <- split(testresults, testresults$testID)
 
-  test_locations <- as.character(unique(:data_model$position))
+  test_locations <- as.character(unique(data_model$position))
 
   run_list <- function(test_data) {
     ident_loc <- test_data[paste(test_data$eccent, test_data$angle, sep = "_") %in% test_locations, ] %>% select(-'testID')
