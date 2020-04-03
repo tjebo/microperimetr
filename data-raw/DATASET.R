@@ -32,39 +32,27 @@ norm_data <-
   mutate(stimID = seq_along(testID)) %>%
   ungroup()
 
-
-usethis::use_data(norm_data, overwrite = TRUE)
-
-data_model <-
-  norm_data %>%
-  select(-testID, stimID)  %>%
-  mutate(testnumber = paste0("E", testnumber)) %>%
+cor_maia <- norm_data %>%
+  mutate(testnumber = paste0("E", .data$testnumber)) %>%
+  select(-'testID') %>%
   pivot_wider(names_from = 'testnumber', values_from = 'value') %>%
-  group_by(testtype) %>%
-  mutate(MeanSens = (E1+E2)/2, position = as.factor(paste(eccent, angle, sep = '_'))) %>%
-  ungroup() %>%
-  select(patID, eye, sex, age, lens, testtype, position, MeanSens)
+  mutate(diff_val = .data$E1-.data$E2, avg = mean(.data$E1+.data$E2)) %>%
+  group_by(.data$testtype) %>%
+  summarise(subj_sd = stats::sd(.data$diff_val, na.rm = TRUE), CoR = 1.96*sqrt(2)*.data$subj_sd)
 
-# adding the output of linear model to the norm data
-pred_norm <- compare_norm(norm_data) # that takes a long time!
-pred_shape <- pred_norm %>%
-  mutate(testnumber = str_sub(testID, -1, -1)) %>%
-  select(patID, eye, testtype, testnumber, eccent, angle, stimID, value, fit, lwr, upr) %>%
-  mutate(testtype = factor(testtype, levels = c("mesopic", "cyan", "red", "cr_diff")),
-         testID = paste(patID, eye, testtype, testnumber, sep = '_'))
+testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
+usethis::use_data(cor_maia, overwrite = TRUE)
 
-MD_PSD_norm <- MD_PSD(pred_shape)
 
-summary_MDPSD <- microperimetR:::MD_PSD_norm %>% mutate(testID = str_replace(testID, 'cr_diff','crdiff')) %>%
-  separate(testID, c('patID', 'eye', 'testtype', 'testnumber')) %>%
-  mutate(testtype = str_replace(testtype, 'crdiff','cr_diff')) %>%
-  group_by(patID, testtype) %>%
-  summarise_at(.vars = vars(MeanDev, PSD), .funs = mean) %>%
-  ungroup %>%
-  split(.$testtype)
-# data_model <- microperimetR:::data_model
-# pred_shape <- microperimetR:::pred_shape
-# MD_PSD_norm <- microperimetR:::MD_PSD_norm
-usethis::use_data(data_model, pred_shape, MD_PSD_norm, summary_MDPSD, internal = TRUE, overwrite = TRUE)
+norm_mpstats_raw <- mpstats(norm_data) # that takes a long time!
+
+norm_mpstats <- norm_mpstats_raw %>%
+  as.data.frame %>%
+  tibble::rownames_to_column('rowID') %>%
+  mutate(rowID = gsub('cr_diff', 'crdiff', rowID),
+         rowID = gsub("_[^_]*$","", rowID)) %>%
+  separate(rowID, c('patID', 'eye', 'testtype', 'testnumber'))
+
+usethis::use_data(norm_mpstats, internal = TRUE, overwrite = TRUE)
 
 

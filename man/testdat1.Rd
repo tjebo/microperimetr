@@ -3,7 +3,7 @@
 \docType{data}
 \name{testdat1}
 \alias{testdat1}
-\title{Just some testdata - one single maia exam}
+\title{Testdata from a single maia test}
 \description{
-Just some testdata - one single maia exam
+Testdata from a single maia test
 }

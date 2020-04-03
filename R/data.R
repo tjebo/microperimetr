@@ -19,8 +19,22 @@
 #'
 NULL
 
-#' Just some testdata - one single maia exam
+#' Testdata from a single maia test
 #' @docType data
 #' @name testdat1
+#'
+NULL
+
+#' Testdata output of read_maia of several tests
+#' @docType data
+#' @name testdata
+#'
+NULL
+
+#' Coefficient of repeatability of sMAIA device
+#' @docType data
+#' @description Calculated with formula
+#'   \eqn{CoR = 1.96* \sqrt2*\sqrt(within-subject-variance)}
+#' @name cor_maia
 #'
 NULL

@@ -26,3 +26,7 @@
 # print(list_dat)
 # list_dat$patID
 # names(list_dat)
+
+#quantile fct
+# stats::ecdf(x$MeanDev)
+

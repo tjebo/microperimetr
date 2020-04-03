@@ -11,6 +11,7 @@
 #' @return Data frame
 #' @import dplyr
 #' @import tidyr
+#' @importFrom rlang .data
 #' @examples
 #' # read_maia(folder = file.path(getwd(), "data-raw"))
 #' @export
@@ -55,11 +56,16 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
           )
         })
         # make values positive, except the -1 (absolute scotomas)
-        stimuli_df <- data.frame(t(sapply(l_stimuli, c)), row.names = 1:length(l_stimuli), stringsAsFactors = FALSE) %>%
-          mutate(id = as.integer(id), value = as.integer(value),
-                 eccent = round(as.numeric(eccent),3), angle = round(as.numeric(angle),3)) %>%
-          mutate(value = ifelse(value == 1, -1, value * (-1)),
-                 angle = ifelse(sign(angle) == -1, 360 + angle, angle))
+        stimuli_df <- data.frame(t(sapply(l_stimuli, c)),
+                                 row.names = 1:length(l_stimuli),
+                                 stringsAsFactors = FALSE) %>%
+          mutate(id = as.integer(.data$id), value = as.integer(.data$value),
+                 eccent = round(as.numeric(.data$eccent),3),
+                 angle = round(as.numeric(.data$angle),3)) %>%
+          mutate(value = ifelse(.data$value == 1, -1, .data$value * (-1)),
+                 angle = ifelse(sign(.data$angle) == -1,
+                                360 + .data$angle, .data$angle)
+                 )
 
         ## define here what else you want to pull out from the xml
         list1 <- list(
@@ -82,8 +88,8 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
         # remove incomplete exams if argument is set to FALSE (default)
         if (incomplete == FALSE) {
           xml_df <- xml_df %>%
-            filter(Completed == 1) %>%
-            select(-Completed)
+            filter(.data$Completed == 1) %>%
+            select(-'Completed')
         }
       }
       ## end of function to make data frames looping through xml_projection_list
@@ -103,31 +109,37 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
   data_all <-
     bind_rows(lapply(list_all_exams, function(x) bind_rows(lapply(x, bind_rows)))) %>%
     rename(stimID = id) %>%
-    arrange(patID, testID, stimID) %>%
+    arrange(.data$patID, .data$testID, .data$stimID) %>%
     mutate(testtype = case_when(
       testtype == "0" ~ "mesopic",
       testtype == "6" ~ "cyan",
       testtype == "7" ~ "red",
-      TRUE ~ testtype
+      TRUE ~ .data$testtype
     ))
   data_all <- data_all %>%
     # filter(!testtype %in% "2") %>%
-    distinct(patID, testID, testtype) %>%
-    rename(type = testtype) %>%
-    left_join(data_all, ., by = c("patID", "baseID" = "testID")) %>%
-    mutate(testtype = coalesce(type, testtype),
-           eye = if_else(eye == 'Right', 'r', 'l')) %>%
-    select(-type)
+    distinct(.data$patID, .data$testID, .data$testtype) %>%
+    rename(type = .data$testtype) %>%
+    left_join(data_all, .data, by = c("patID", "baseID" = "testID")) %>%
+    mutate(testtype = coalesce(.data$type, .data$testtype),
+           eye = if_else(.data$eye == 'Right', 'r', 'l')) %>%
+    select(-"type")
 
   if (timeclass == "date") {
-    data_all <- data_all %>% mutate(testDate = lubridate::as_date(lubridate::ymd_hm(testDate)))
+    data_all <- data_all %>%
+      mutate(testDate = lubridate::as_date(lubridate::ymd_hm(.data$testDate)))
   } else if (timeclass == "datetime") {
-    data_all <- data_all %>% mutate(testDate = lubridate::ymd_hm(testDate))
+    data_all <- data_all %>%
+      mutate(testDate = lubridate::ymd_hm(.data$testDate))
   }
   # use get_names to retrieve sex details of patients. and join with main data frame
   pat_names <- get_names(folder = folder) %>%
-    select(patID, sex) %>% mutate(patID = as.character(patID))
-  data_bind <- data_all %>% left_join(pat_names, by = 'patID') %>%
-    select(patID, sex, everything())
-  return(data_bind)
+    select('patID', 'sex') %>%
+    mutate(patID = as.character(.data$patID))
+
+  data_bind <-
+    data_all %>%
+    left_join(pat_names, by = 'patID') %>%
+    select('patID', 'sex', everything())
+  data_bind
 }
