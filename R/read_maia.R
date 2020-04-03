@@ -106,7 +106,7 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
   list_all_exams <- lapply(tgz_name, pull_out)
 
   # data_all
-  data_all <-
+  data_coll <-
     bind_rows(lapply(list_all_exams, function(x) bind_rows(lapply(x, bind_rows)))) %>%
     rename(stimID = id) %>%
     arrange(.data$patID, .data$testID, .data$stimID) %>%
@@ -116,15 +116,17 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
       testtype == "7" ~ "red",
       TRUE ~ .data$testtype
     ))
-  data_all <- data_all %>%
+  data_test <- data_coll %>%
     # filter(!testtype %in% "2") %>%
     distinct(.data$patID, .data$testID, .data$testtype) %>%
-    rename(type = .data$testtype) %>%
-    left_join(data_all, .data, by = c("patID", "baseID" = "testID")) %>%
+    rename(type = .data$testtype)
+  # return(data_test)
+  # return(data_coll)
+  data_all <- left_join(data_coll, data_test, by = c("patID", 'baseID' = "testID")) %>%
     mutate(testtype = coalesce(.data$type, .data$testtype),
            eye = if_else(.data$eye == 'Right', 'r', 'l')) %>%
     select(-"type")
-
+  return(data_all)
   if (timeclass == "date") {
     data_all <- data_all %>%
       mutate(testDate = lubridate::as_date(lubridate::ymd_hm(.data$testDate)))
