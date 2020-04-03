@@ -22,6 +22,8 @@ It is built for centervue’s maia and compass devices.
 This is a basic example which shows you how to import your visual field
 data and plot the (estimated) mean deviation for each included test:
 
+### Load sample visual field data in a breeze
+
 ``` r
 # save the tgz files from MAIA patient backup into any directory, 
 # Here this is "data_raw", a folder in the working directory 
@@ -32,8 +34,10 @@ testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
 compare_dat <- compare(testdata)
 ```
 
+### Get some basic visual field statistics and visualise them for exploration
+
 ``` r
-# Get some basic visual field statistics
+# Visual fields statistics arranged nicely in a data frame
 mpstats(compare_dat)
 #>              mean_sens sd_sens mean_dev  psd
 #> 2962_mesopic     23.92    3.61    -1.05 2.92
@@ -51,7 +55,9 @@ mpstats(compare_dat)
 #> 2997_red         21.35    4.05    -0.37 4.04
 #> 834_mesopic      26.50    4.24     0.27 3.75
 #> 835_mesopic      28.46    4.73     2.20 4.47
-# Plot mean sensitivity, mean deviation and pattern standard deviation 
+
+# Plotting mean sensitivity, mean deviation and pattern standard deviation
+# Shows the visual field statistics in relation to normal percentiles. 
 plot_mpstats(compare_dat)
 ```
 
