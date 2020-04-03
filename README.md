@@ -20,49 +20,21 @@ It is built for centervue’s maia and compass devices.
 ## Example
 
 This is a basic example which shows you how to import your visual field
-data and plot the (estimated) mean deviation for each included
-test:
+data and plot the (estimated) mean deviation for each included test:
 
 ``` r
-# save the tgz files from MAIA patient backup into any directory, here "norm_raw", which is a folder in the working directory 
+# save the tgz files from MAIA patient backup into any directory, 
+# Here this is "data_raw", a folder in the working directory 
 library(microperimetr)
-library(tidyverse)
+# read the tgz files
 testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
+#Interpolate normal values for the plot 
+compare_dat <- compare(testdata)
 ```
 
 ``` r
 # Get some basic visual field statistics
-mpstats(testdata)
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
+mpstats(compare_dat)
 #>              mean_sens sd_sens mean_dev  psd
 #> 2962_mesopic     23.92    3.61    -1.05 2.92
 #> 2963_mesopic     23.94    3.72    -0.96 2.82
@@ -80,40 +52,10 @@ mpstats(testdata)
 #> 834_mesopic      26.50    4.24     0.27 3.75
 #> 835_mesopic      28.46    4.73     2.20 4.47
 # Plot mean sensitivity, mean deviation and pattern standard deviation 
-plot_mpstats(testdata)
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
-#> [using ordinary kriging]
+plot_mpstats(compare_dat)
 ```
 
-![](README-plot_MD-1.png)<!-- -->
+![](README-plot_mpstats-1.png)<!-- -->
 
 ## Installation
 
