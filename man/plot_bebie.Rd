@@ -21,8 +21,8 @@ Plotting bebie curve. For details of calculation of bebie stats,
 see \link{field_variation} and \link{calc_bebie}
 }
 \examples{
-field_var <- field_variation(testdat1)
-bebie_stats <- calc_bebie(testdat1, field_var)
+field_var <- field_variation()
+bebie_stats <- calc_bebie(testdat1)
 plot_bebie(bebie_stats)
 }
 \seealso{

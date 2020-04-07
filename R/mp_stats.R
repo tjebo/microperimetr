@@ -233,24 +233,23 @@ bootstrap_maia <- function(n = 50, remove_diff = TRUE) {
 #'  The output of this function is used for the prediction in
 #' [predict_norm]
 #' @param testdata test for which field variation will be calculated
-#' @param field_var field variation for locations in testdata. See details
 #' @import dplyr
 #' @import tidyr
 #' @importFrom rlang .data
 #' @family prediction functions
 #' @examples
-#' field_var <- field_variation(testdat1)
+#' field_var <- field_variation()
 #' bebie_stats <- calc_bebie(testdat1, field_var)
 #' @return List
 #' @details field variations should be created with [field_variations]
 #' @export
-calc_bebie <- function(testdata, field_var){
+calc_bebie <- function(testdata){
   testdat_coord <- coord_cart(testdata) %>%
     filter(stimID != 0) %>%
-    mutate_at(.vars = vars(x, y), .funs=plyr::round_any, accuracy = 0.2) %>%
+    mutate_at(.vars = vars(x, y), .funs=plyr::round_any, accuracy = 0.25) %>%
     mutate_at(.vars = vars(x, y), .funs= round, digits = 1)
 
-  testtest <- testdat_coord %>% left_join(field_var, by = c('x', 'y'))
+  testtest <- testdat_coord %>% left_join(field_var, by = c('testtype','x', 'y'))
 
   cumdev_frame <-
     testtest %>%

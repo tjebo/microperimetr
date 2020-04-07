@@ -51,15 +51,7 @@ data_model <- norm_data %>%
 
 usethis::use_data(data_model, overwrite = TRUE)
 
-cor_maia <- norm_data %>%
-  mutate(testnumber = paste0("E", .data$testnumber)) %>%
-  select(-'testID') %>%
-  pivot_wider(names_from = 'testnumber', values_from = 'value') %>%
-  mutate(diff_val = .data$E1-.data$E2, avg = mean(.data$E1+.data$E2)) %>%
-  group_by(.data$testtype) %>%
-  summarise(subj_sd = stats::sd(.data$diff_val, na.rm = TRUE), CoR = 1.96*sqrt(2)*.data$subj_sd)
-
-usethis::use_data(cor_maia, overwrite = TRUE)
+list_fields <- field_variation()
 
 norm_compared <- compare(norm_data) # that takes a while!
 
@@ -76,7 +68,20 @@ norm_mpstats <- norm_mpstats_raw %>%
          rowID = gsub("_[^_]*$","", rowID)) %>%
   separate(rowID, c('patID', 'eye', 'testtype', 'testnumber'))
 
-usethis::use_data(norm_mpstats, norm_vs_fit, internal = TRUE, overwrite = TRUE)
+
+list_field_var <-
+  list_fields %>%
+  mutate(testtype = str_extract(normID, "[:alpha:]+"),
+         patID = str_extract(normID, "[:digit:]+")) %>%
+  select(-normID)
+field_interpol <-  list_field_var %>%
+  group_by(testtype, x,y) %>%
+  summarise_at('fit', .funs = list(mean = mean, min = min, max = max, var = var))
+
+field_var <- microperimetr:::field_var
+norm_mpstats <- microperimetr:::norm_mpstats
+norm_vs_fit <- microperimetr:::norm_vs_fit
+usethis::use_data(field_var, norm_mpstats, norm_vs_fit, internal = TRUE, overwrite = TRUE)
 
 
 

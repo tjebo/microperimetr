@@ -239,40 +239,38 @@ interpolate_norm <- function(pred_data,
 #' variation of the visual field
 #' @name field_variation
 #' @author tjebo
-#' @description generating field variations based on simple kringing
+#' @description generating field variations based on simple kriging
 #'   of normal fields, without the step of predicting location with
 #'  linear models first.
-#' @param testdata test for which field variation will be calculated
 #' @import dplyr
 #' @import tidyr
 #' @importFrom rlang .data
 #' @family prediction functions
 #' @examples
-#' field_var <- field_variation(testdat1)
+#' field_var <- field_variation()
 #' bebie_stats <- calc_bebie(testdat1, field_var)
 #' @return data frame
 #' @export
-field_variation <- function(testdata) {
-  testtype_unq <- unique(testdata$testtype)
-  if (length(testtype_unq) > 1) {
-    stop("Too many tests. Create a list of unique tests.", call. = FALSE)
-  }
-
+field_variation <- function() {
+  # testtype_unq <- unique(testdata$testtype)
+  # if (length(testtype_unq) > 1) {
+  #   stop("Too many tests. Create a list of unique tests.", call. = FALSE)
+  # }
   data_split <- data_model %>%
-    dplyr::filter(testtype == testtype_unq) %>%
+    dplyr::filter(testtype != 'cr_diff') %>%
     mutate(value = MeanSens) %>%
     drop_na(value) %>%
-    split(., .$patID)
+    split(., interaction(.$testtype,.$patID))
 
   interpolate_field <- function(x) {
-    inter_test <- interpolate_norm(pred_data = x) %>%
-      mutate_at(.vars = vars(x, y), .funs = round, digits = 1)
+    inter_test <- interpolate_norm(pred_data = x, grid_density = 0.25) %>%
+      mutate_at(.vars = vars(x, y), .funs = round, digits = 2)
     inter_test
   }
   res_fields <- lapply(data_split, interpolate_field)
 
   res_fields_bind <- bind_rows(res_fields, .id = "normID") %>%
-    mutate(fit = round(fit, 3))
+    mutate(fit = round(fit, 2))
   res_fields_bind
   class(res_fields_bind) <- c("field_var","tbl_df", "tbl", "data.frame")
   res_fields_bind

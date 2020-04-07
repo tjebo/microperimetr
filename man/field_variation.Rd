@@ -4,21 +4,18 @@
 \alias{field_variation}
 \title{variation of the visual field}
 \usage{
-field_variation(testdata)
-}
-\arguments{
-\item{testdata}{test for which field variation will be calculated}
+field_variation()
 }
 \value{
 data frame
 }
 \description{
-generating field variations based on simple kringing
+generating field variations based on simple kriging
 of normal fields, without the step of predicting location with
 linear models first.
 }
 \examples{
-field_var <- field_variation(testdat1)
+field_var <- field_variation()
 bebie_stats <- calc_bebie(testdat1, field_var)
 }
 \seealso{

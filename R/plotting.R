@@ -196,8 +196,8 @@ p <- ggplot(
 #' @importFrom rlang .data
 #' @seealso [ggplot2::geom_line]
 #' @examples
-#' field_var <- field_variation(testdat1)
-#' bebie_stats <- calc_bebie(testdat1, field_var)
+#' field_var <- field_variation()
+#' bebie_stats <- calc_bebie(testdat1)
 #' plot_bebie(bebie_stats)
 #' @family microperimetry plotting functions
 #' @return ggplot object with side effect of printing to console
@@ -207,8 +207,8 @@ p <- ggplot(
 plot_bebie <- function(data, ...) {
 
   if(!inherits(data, 'bebie')){
-  field_var <- field_variation(data)
-  bebie_stats <- calc_bebie(data, field_var)
+  field_var <- field_variation()
+  bebie_stats <- calc_bebie(data)
   } else {
     bebie_stats <- data
   }

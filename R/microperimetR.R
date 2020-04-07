@@ -24,4 +24,14 @@
 #'   xlab("Age [years]") +
 #'   geom_smooth(aes(color = testtype, linetype = lens), method = 'lm', formula = y ~ x) +
 #'   scale_color_manual(name = 'Regression lines', values = maia_palette)
+#'
+#'# Calculate coefficient of repeatability of norm data.
+#'cor_maia <- norm_data %>%
+#'mutate(testnumber = paste0("E", .data$testnumber)) %>%
+#'select(-'testID') %>%
+#'pivot_wider(names_from = 'testnumber', values_from = 'value') %>%
+#'mutate(diff_val = .data$E1-.data$E2, avg = mean(.data$E1+.data$E2)) %>%
+#'group_by(.data$testtype) %>%
+#'summarise(subj_sd = stats::sd(.data$diff_val, na.rm = TRUE), CoR = 1.96*sqrt(2)*.data$subj_sd)
+
 NULL

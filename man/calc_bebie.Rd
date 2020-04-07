@@ -4,12 +4,10 @@
 \alias{calc_bebie}
 \title{calculates bebie statistics}
 \usage{
-calc_bebie(testdata, field_var)
+calc_bebie(testdata)
 }
 \arguments{
 \item{testdata}{test for which field variation will be calculated}
-
-\item{field_var}{field variation for locations in testdata. See details}
 }
 \value{
 List
@@ -24,7 +22,7 @@ The output of this function is used for the prediction in
 field variations should be created with \link{field_variations}
 }
 \examples{
-field_var <- field_variation(testdat1)
+field_var <- field_variation()
 bebie_stats <- calc_bebie(testdat1, field_var)
 }
 \seealso{
