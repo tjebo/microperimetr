@@ -22,6 +22,12 @@ plotting relative percentile of estimated Mean deviation for tested observers
 # testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
 # plot_mpstats(testdata)
 }
+\seealso{
+Other microperimetry plotting functions: 
+\code{\link{plot_bebie}()},
+\code{\link{plot_bland}()}
+}
 \author{
 tjebo
 }
+\concept{microperimetry plotting functions}

@@ -169,3 +169,113 @@ mpstats_manual <- function(test_val, norm_val, var_norm, data = NULL) {
     (sum((testval - normval - mean_dev)^2 / normvar, na.rm = TRUE) /
        (length(normvar) - 1)))
 }
+
+#' bootstrapping maia norm data
+#' @name bootstrap_maia
+#' @author tjebo
+#' @description creates n bootstrap samples of the original norm_data
+#' @param n number of bootstrap samples
+#' @param remove_diff logical. TRUE will remove cr_diff data (default)
+#' @import dplyr
+#' @import tidyr
+#' @importFrom rlang .data
+#' @family stat functions
+#' @examples
+#' boots <- bootstrap_maia()
+#' make linear model for each bootstrap sample
+#' lm_boots <- lapply(boots, function(x) lm_loc(normdata = x))
+#' # predict the location for each linear model.
+#' # Using data of one test. But works also without testdata.
+#' pred_boots <- lapply(
+#'   lm_boots,
+#'   function(x) predict_norm(testdata = testdat1, list_model = x)
+#' )
+#' # Creating the coordinates in testdat1 for the use in
+#' # interpolate_norm
+#' testdat_coord <- coord_cart(testdat1)
+#'
+#' # now create the interpolation maps for each bootstrap sample
+#' interpol_boots <- lapply(
+#'   pred_boots, function(x) {
+#'     interpolate_norm(pred_data = x, newgrid = testdat_coord)
+#'     }
+#' )
+#' @return List
+#' @details Returns list of linear models
+#' @export
+#'
+bootstrap_maia <- function(n = 50, remove_diff = TRUE) {
+  if(remove_diff){
+    data_boots <- data_model[data_model$testtype != "cr_diff", ]
+  }
+  length_repeat <- length(unique(data_boots$stimID)) * length(unique(data_boots$testtype))
+  list_norm <- split(data_boots, data_boots$patID, drop = TRUE)
+
+  set.seed(41)
+  sample_id <- as.data.frame(
+    replicate(sample(length(unique(data_boots$patID)), replace = TRUE), n = n)
+  )
+
+  boots <- lapply(sample_id, function(x) {
+    boot_sample <- bind_rows(list_norm[x]) %>%
+      arrange(.data$patID)
+    boot_sample$patID <- rep(1:nrow(sample_id), each = length_repeat)
+    boot_sample
+  })
+  boots
+}
+
+#' calculates bebie statistics
+#' @name calc_bebie
+#' @author tjebo
+#' @description linear regression model for each test location
+#' of the grid underlying [norm_data], with age as predictor
+#'  The output of this function is used for the prediction in
+#' [predict_norm]
+#' @param testdata test for which field variation will be calculated
+#' @param field_var field variation for locations in testdata. See details
+#' @import dplyr
+#' @import tidyr
+#' @importFrom rlang .data
+#' @family prediction functions
+#' @examples
+#' field_var <- field_variation(testdat1)
+#' bebie_stats <- calc_bebie(testdat1, field_var)
+#' @return List
+#' @details field variations should be created with [field_variations]
+#' @export
+calc_bebie <- function(testdata, field_var){
+  testdat_coord <- coord_cart(testdata) %>%
+    filter(stimID != 0) %>%
+    mutate_at(.vars = vars(x, y), .funs=plyr::round_any, accuracy = 0.2) %>%
+    mutate_at(.vars = vars(x, y), .funs= round, digits = 1)
+
+  testtest <- testdat_coord %>% left_join(field_var, by = c('x', 'y'))
+
+  cumdev_frame <-
+    testtest %>%
+    group_by(eccent, angle) %>%
+    mutate(meansens = mean(fit)) %>%
+    ungroup()
+
+  norm_cumdev <- cumdev_frame %>%
+    group_by(normID) %>%
+    mutate(locdev = fit - meansens,
+           rank = rank(desc(locdev), ties.method = 'last')
+    ) %>%
+    group_by(rank) %>%
+    summarise(mean = mean(locdev, na.rm = TRUE),
+              upr = mean + 1.96 * sd(locdev, na.rm = TRUE),
+              lwr = mean - 1.96 * sd(locdev, na.rm = TRUE)) %>%
+    ungroup()
+
+  test_cumdev <- cumdev_frame %>%
+    distinct(patID, testID, testtype, stimID, value, meansens) %>%
+    mutate(locdev = value - meansens,
+           rank = rank(desc(locdev), ties.method = 'last')
+    )
+  bebiestats <- left_join(test_cumdev, norm_cumdev, by = 'rank')
+  class(bebiestats) <- c("bebie","tbl_df", "tbl", "data.frame")
+  bebiestats
+}
+

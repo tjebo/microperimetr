@@ -45,6 +45,7 @@ mpstats(testdata)
 \link{interpolate_norm}
 
 Other stat functions: 
+\code{\link{bootstrap_maia}()},
 \code{\link{mpstats_manual}()},
 \code{\link{mpstats_single}()}
 }

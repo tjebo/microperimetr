@@ -25,12 +25,12 @@ It is built for centervue's maia and compass devices.
 - microperimetr has functions for both location-dependent and location-independent visual field analysis. Because the normdata is interpolated for location-dependent analysis, any custom grid can be used for both types of analysis. 
 - microperimetr also includes functions for some more or less common visualistaion of visual field data
 
-## Example
+## Examples
 
 This is a basic example which shows you how to import your visual field data and plot the (estimated) mean deviation for each included test:
 
 ### Load sample visual field data in a breeze
-```{r example, warning=FALSE, message=FALSE, results='hide'}
+```{r example1, warning=FALSE, message=FALSE, results='hide'}
 # save the tgz files from MAIA patient backup into any directory, 
 # Here this is "data_raw", a folder in the working directory 
 library(microperimetr)
@@ -39,12 +39,22 @@ testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
 #Interpolate normal values for the plot 
 compare_dat <- compare(testdata)
 ```
-
-### Get some basic visual field statistics and visualise them for exploration
-```{r plot_mpstats, warning=FALSE, message=FALSE}
+```{r example2, warning=FALSE, message=FALSE, results='hide'}
+field_var <- field_variation(testdat1)
+bebie_stats <- calc_bebie(testdat1, field_var)
+```
+### Get some basic visual field statistics
+```{r mpstats, warning=FALSE, message=FALSE}
 # Visual fields statistics arranged nicely in a data frame
 mpstats(compare_dat)
+```
+### Plot bebie curves
+```{r bebie}
+plot_bebie(bebie_stats)
+```
 
+### Plot other visual field statistics
+```{r plot_mpstats, warning=FALSE, message=FALSE}
 # Plotting mean sensitivity, mean deviation and pattern standard deviation
 # Shows the visual field statistics in relation to normal percentiles. 
 plot_mpstats(compare_dat)

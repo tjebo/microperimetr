@@ -2,48 +2,42 @@
 % Please edit documentation in R/prediction.R
 \name{predict_norm}
 \alias{predict_norm}
-\title{predict_norm}
+\title{Predict sensitivity location-wise}
 \usage{
-predict_norm(
-  testdata = NULL,
-  age = NULL,
-  sex = NULL,
-  lens = NULL,
-  interval = "prediction"
-)
+predict_norm(testdata = NULL, list_model, age = NULL, interval = "prediction")
 }
 \arguments{
 \item{testdata}{if passed, the testtype of the test will be extracted}
 
+\item{list_model}{\strong{required} list of models for each location}
+
 \item{age}{age of individual to be predicted. defaults to 50.}
 
-\item{sex}{sex of individual to be predicted. defaults to 'm'.}
-
-\item{lens}{lens status. must be either 'natural' (default) or 'pseudo'.
-Defaults to 'natural'}
-
 \item{interval}{used in \link[stats]{predict.lm}}
+
+\item{normdata}{data used for prediction, defaults to norm_data.}
 }
 \value{
 Data frame with predicted sensitivity values for all test types
 at each location of the grid underlying \link{norm_data}
 }
 \description{
-location based prediction of retinal sensitivity
-using a linear model for each location of the grid underlying \link{norm_data}
-with age, sex and lens status
-as covariates. The output of this function is used for the interpolation
-with \link{interpolate_norm}
+location based prediction of retinal sensitivity. Linear model
+from \link{loc_lm}. Output for \link{interpolate_norm}
 }
 \examples{
-preddat <- predict_norm(testdat1)
+lm_dat <- lm_loc(testdata = testdat1)
+preddat <- predict_norm(testdat1, list_model = lm_dat)
 testdat_coord <- coord_cart(testdat1)
 interpol_dat <- interpolate_norm(preddat, newgrid = testdat_coord)
 }
 \seealso{
 Other prediction functions: 
+\code{\link{calc_bebie}()},
 \code{\link{coord_cart}()},
-\code{\link{interpolate_norm}()}
+\code{\link{field_variation}()},
+\code{\link{interpolate_norm}()},
+\code{\link{lm_loc}()}
 }
 \author{
 tjebo

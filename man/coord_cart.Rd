@@ -16,13 +16,17 @@ Data frames
 Adding cartesian coordinates to test results
 }
 \examples{
-preddat <- predict_norm(testdat1)
+lm_dat <- lm_loc(testdata = testdat1)
+preddat <- predict_norm(testdat1, list_model = lm_dat)
 testdat_coord <- coord_cart(testdat1)
 interpol_dat <- interpolate_norm(preddat, newgrid = testdat_coord)
 }
 \seealso{
 Other prediction functions: 
+\code{\link{calc_bebie}()},
+\code{\link{field_variation}()},
 \code{\link{interpolate_norm}()},
+\code{\link{lm_loc}()},
 \code{\link{predict_norm}()}
 }
 \concept{prediction functions}

@@ -16,7 +16,12 @@ norm_data <-
          lens = replace_na(Lens, 'natural'),
          lens = if_else(lens != "pp", "natural", "pseudo"),
          sex = if_else(Sex == 'Male', 'm','f'),
-         eye = if_else(Eye == 'OD','r','l')) %>%
+         eye = if_else(Eye == 'OD','r','l'),
+         angle = ifelse(.data$eye == 'l', 180- .data$angle, .data$angle),
+         angle = ifelse(sign(.data$angle) == -1,
+                        360 + .data$angle, .data$angle),
+         angle = ifelse(.data$eccent == 0, 0, .data$angle)
+         ) %>%
   select(patID = Patient.ID, eye, age = Age, sex, lens, testID = Examination.ID, contains('Fixation'),
          wrong = WrongPressureEvents, testtype, testnumber, avg_rctn = Average.reaction.time,
          eccent, angle, value) %>%
@@ -25,12 +30,26 @@ norm_data <-
   pivot_wider(names_from = 'testtype', values_from = 'value') %>%
   mutate(cr_diff = cyan - red) %>%
   pivot_longer(names_to = 'testtype', values_to = 'value', cols = mesopic:cr_diff) %>%
-  mutate(testtype = factor(testtype, levels = c("mesopic", "cyan", "red", "cr_diff")),
-         testID = paste(patID, eye, testtype, testnumber, sep = '_')) %>%
+  mutate(testID = paste(patID, eye, testtype, testnumber, sep = '_')) %>%
   arrange(testID, eccent, angle) %>%
   group_by(testID) %>%
   mutate(stimID = seq_along(testID)) %>%
   ungroup()
+
+usethis::use_data(norm_data, overwrite = TRUE)
+
+data_model <- norm_data %>%
+  select(-'testID') %>%
+  mutate(testnumber = paste0("E", .data$testnumber)) %>%
+  pivot_wider(names_from = "testnumber", values_from = "value") %>%
+  mutate(
+    MeanSens = (.data$E1 + .data$E2) / 2,
+    position = paste(.data$eccent, .data$angle, sep = "_"),
+    position_fac = factor(position, levels = vec_normpositions)
+  ) %>%
+  select(-"E1", -"E2")
+
+usethis::use_data(data_model, overwrite = TRUE)
 
 cor_maia <- norm_data %>%
   mutate(testnumber = paste0("E", .data$testnumber)) %>%
@@ -40,11 +59,15 @@ cor_maia <- norm_data %>%
   group_by(.data$testtype) %>%
   summarise(subj_sd = stats::sd(.data$diff_val, na.rm = TRUE), CoR = 1.96*sqrt(2)*.data$subj_sd)
 
-testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
 usethis::use_data(cor_maia, overwrite = TRUE)
 
+norm_compared <- compare(norm_data) # that takes a while!
 
-norm_mpstats_raw <- mpstats(norm_data) # that takes a long time!
+norm_vs_fit <- norm_compared %>%
+  bind_rows() %>%
+  select(-'test_unq')
+
+norm_mpstats_raw <- mpstats(norm_compared)
 
 norm_mpstats <- norm_mpstats_raw %>%
   as.data.frame %>%
@@ -53,6 +76,7 @@ norm_mpstats <- norm_mpstats_raw %>%
          rowID = gsub("_[^_]*$","", rowID)) %>%
   separate(rowID, c('patID', 'eye', 'testtype', 'testnumber'))
 
-usethis::use_data(norm_mpstats, internal = TRUE, overwrite = TRUE)
+usethis::use_data(norm_mpstats, norm_vs_fit, internal = TRUE, overwrite = TRUE)
+
 
 

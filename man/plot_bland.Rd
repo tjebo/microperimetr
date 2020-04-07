@@ -20,8 +20,13 @@ Plotting bland altman plot of test retest of sMAIA device
 Data from norm data
 }
 \seealso{
-\link{geom_point}
+\link[ggplot2:geom_point]{ggplot2::geom_point}
+
+Other microperimetry plotting functions: 
+\code{\link{plot_bebie}()},
+\code{\link{plot_mpstats}()}
 }
 \author{
 tjebo
 }
+\concept{microperimetry plotting functions}

@@ -14,8 +14,8 @@ data frames with original and predicted normal values.
 }
 \description{
 Interpolates normal values and compares with test values.
-This is basically a wrapper around \link{predict_norm}, \link{coord_cart} and
-\link{interpolate_norm}
+This is basically a wrapper around \link{lm_loc}, \link{predict_norm},
+\link{coord_cart} and \link{interpolate_norm}
 }
 \details{
 \strong{testdata}: This should be ideally output from \link{read_maia}.

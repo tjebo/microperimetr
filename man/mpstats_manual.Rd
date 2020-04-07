@@ -24,6 +24,7 @@ manually from data or vectors.
 }
 \seealso{
 Other stat functions: 
+\code{\link{bootstrap_maia}()},
 \code{\link{mpstats_single}()},
 \code{\link{mpstats}()}
 }

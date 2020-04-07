@@ -17,7 +17,7 @@ It is built for centervue’s maia and compass devices.
   - microperimetr also includes functions for some more or less common
     visualistaion of visual field data
 
-## Example
+## Examples
 
 This is a basic example which shows you how to import your visual field
 data and plot the (estimated) mean deviation for each included test:
@@ -34,28 +34,45 @@ testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
 compare_dat <- compare(testdata)
 ```
 
-### Get some basic visual field statistics and visualise them for exploration
+``` r
+field_var <- field_variation(testdat1)
+bebie_stats <- calc_bebie(testdat1, field_var)
+```
+
+### Get some basic visual field statistics
 
 ``` r
 # Visual fields statistics arranged nicely in a data frame
 mpstats(compare_dat)
 #>              mean_sens sd_sens mean_dev  psd
-#> 2962_mesopic     23.92    3.61    -1.05 2.92
-#> 2963_mesopic     23.94    3.72    -0.96 2.82
-#> 2964_cyan        19.06    4.65    -0.87 4.58
-#> 2964_red         20.65    4.54    -1.21 3.30
-#> 2965_cyan        19.65    4.51    -0.26 4.49
-#> 2965_red         19.65    4.51    -2.27 4.28
-#> 2993_cyan        14.20    7.57    -4.21 9.48
-#> 2994_mesopic     24.21    3.71    -0.35 3.18
-#> 2995_mesopic     23.36    3.67    -1.22 3.04
-#> 2996_cyan        22.08    4.61     2.76 4.23
-#> 2996_red         21.54    3.48    -0.16 3.13
-#> 2997_cyan        21.35    4.05     1.86 4.34
-#> 2997_red         21.35    4.05    -0.37 4.04
-#> 834_mesopic      26.50    4.24     0.27 3.75
-#> 835_mesopic      28.46    4.73     2.20 4.47
+#> 2962_mesopic     23.92    3.61    -1.01 3.02
+#> 2963_mesopic     23.94    3.72    -0.97 2.96
+#> 2964_cyan        19.06    4.65    -0.96 4.44
+#> 2964_red         20.65    4.54    -1.34 3.32
+#> 2965_cyan        19.65    4.51    -0.48 4.52
+#> 2965_red         19.65    4.51    -2.40 4.33
+#> 2993_cyan        14.20    7.57    -4.88 9.41
+#> 2994_mesopic     24.21    3.71    -0.39 3.26
+#> 2995_mesopic     23.36    3.67    -1.30 3.16
+#> 2996_cyan        22.08    4.61     2.42 4.20
+#> 2996_red         21.54    3.48    -0.30 2.96
+#> 2997_cyan        21.35    4.05     1.49 4.31
+#> 2997_red         21.35    4.05    -0.50 4.02
+#> 834_mesopic      26.50    4.24     0.16 3.97
+#> 835_mesopic      28.46    4.73     2.18 4.52
+```
 
+### Plot bebie curves
+
+``` r
+plot_bebie(bebie_stats)
+```
+
+![](README-bebie-1.png)<!-- -->
+
+### Plot other visual field statistics
+
+``` r
 # Plotting mean sensitivity, mean deviation and pattern standard deviation
 # Shows the visual field statistics in relation to normal percentiles. 
 plot_mpstats(compare_dat)

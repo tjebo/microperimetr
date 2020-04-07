@@ -26,13 +26,17 @@ Interpolates grid based on local predictions of normal data.
 #       model = fit_fit, nfold = nrow(interpol_dat))
 #RMSE(x$var1.pred,x$observed)
 
-preddat <- predict_norm(testdat1)
+lm_dat <- lm_loc(testdata = testdat1)
+preddat <- predict_norm(testdat1, list_model = lm_dat)
 testdat_coord <- coord_cart(testdat1)
 interpol_dat <- interpolate_norm(preddat, newgrid = testdat_coord)
 }
 \seealso{
 Other prediction functions: 
+\code{\link{calc_bebie}()},
 \code{\link{coord_cart}()},
+\code{\link{field_variation}()},
+\code{\link{lm_loc}()},
 \code{\link{predict_norm}()}
 }
 \author{

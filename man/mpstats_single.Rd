@@ -41,6 +41,7 @@ mpstats_single(interpol_dat)
 \link[stats:predict.lm]{stats::predict.lm}
 
 Other stat functions: 
+\code{\link{bootstrap_maia}()},
 \code{\link{mpstats_manual}()},
 \code{\link{mpstats}()}
 }

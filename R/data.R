@@ -19,6 +19,12 @@
 #'
 NULL
 
+#' norm_data prepared for lm models
+#' @docType data
+#' @name data_model
+#'
+NULL
+
 #' Testdata from a single maia test
 #' @docType data
 #' @name testdat1

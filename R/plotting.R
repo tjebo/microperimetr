@@ -11,6 +11,7 @@
 #' @import tibble
 #' @import dplyr
 #' @import tidyr
+#' @family microperimetry plotting functions
 #' @examples
 #' # testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
 #' # plot_mpstats(testdata)
@@ -126,10 +127,12 @@ plot_mpstats <- function(testdata, quantiles = 0.1) {
 #'   If not given, the data from sMAIA test retest will be shown
 #' @param ... further arguments which will be passed to geom_point
 #' @author tjebo
+#' @import ggplot2
 #' @import dplyr
 #' @import tidyr
 #' @importFrom rlang .data
-#' @seealso [geom_point]
+#' @seealso [ggplot2::geom_point]
+#' @family microperimetry plotting functions
 #' @return ggplot object with side effect of printing to console
 #' @export
 #'
@@ -179,3 +182,48 @@ p <- ggplot(
   }
   p
 }
+
+#' Plotting bebie curves
+#' @name plot_bebie
+#' @description Plotting bebie curve. For details of calculation of bebie stats,
+#'   see [field_variation] and [calc_bebie]
+#' @param data Data for which bebie curve will be calculated. Can be either
+#'   the original test data or the output from [calc_bebie]
+#' @param ... further arguments which will be passed to geom_line for the
+#'   test data
+#' @author tjebo
+#' @import ggplot2
+#' @importFrom rlang .data
+#' @seealso [ggplot2::geom_line]
+#' @examples
+#' field_var <- field_variation(testdat1)
+#' bebie_stats <- calc_bebie(testdat1, field_var)
+#' plot_bebie(bebie_stats)
+#' @family microperimetry plotting functions
+#' @return ggplot object with side effect of printing to console
+#' @export
+#'
+#'
+plot_bebie <- function(data, ...) {
+
+  if(!inherits(data, 'bebie')){
+  field_var <- field_variation(data)
+  bebie_stats <- calc_bebie(data, field_var)
+  } else {
+    bebie_stats <- data
+  }
+  p <- ggplot(bebie_stats, aes(x = rank)) +
+    geom_ribbon(aes(ymin = lwr, ymax = upr, color = testtype, fill = testtype),
+                alpha = 0.3, size = 0.2,
+                ) +
+    geom_line(aes(y = mean), linetype = "dashed") +
+    geom_line(aes(y = locdev, color = testtype), ...) +
+    scale_color_manual(values = maia_palette) +
+    scale_fill_manual(values = maia_palette, guide = FALSE) +
+    labs(color = "Test type") +
+    theme_min()
+
+
+  p
+}
+

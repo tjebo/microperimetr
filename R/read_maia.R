@@ -62,9 +62,7 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
           mutate(id = as.integer(.data$id), value = as.integer(.data$value),
                  eccent = round(as.numeric(.data$eccent),3),
                  angle = round(as.numeric(.data$angle),3)) %>%
-          mutate(value = ifelse(.data$value == 1, -1, .data$value * (-1)),
-                 angle = ifelse(sign(.data$angle) == -1,
-                                360 + .data$angle, .data$angle)
+          mutate(value = ifelse(.data$value == 1, -1, .data$value * (-1))
                  )
 
         ## define here what else you want to pull out from the xml
@@ -126,7 +124,7 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
     mutate(testtype = coalesce(.data$type, .data$testtype),
            eye = if_else(.data$eye == 'Right', 'r', 'l')) %>%
     select(-"type")
-  return(data_all)
+
   if (timeclass == "date") {
     data_all <- data_all %>%
       mutate(testDate = lubridate::as_date(lubridate::ymd_hm(.data$testDate)))
@@ -142,6 +140,12 @@ read_maia <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetim
   data_bind <-
     data_all %>%
     left_join(pat_names, by = 'patID') %>%
-    select('patID', 'sex', everything())
+    select('patID', 'sex', everything()) %>%
+    mutate(
+      angle = ifelse(.data$eye == 'l', 180- .data$angle, .data$angle),
+      angle = ifelse(sign(.data$angle) == -1,
+                 360 + .data$angle, .data$angle),
+      angle = ifelse(.data$eccent == 0, 0, .data$angle)
+      )
   data_bind
 }
