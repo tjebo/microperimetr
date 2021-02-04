@@ -35,7 +35,7 @@ This is a basic example which shows you how to import your visual field data and
 # Here this is "data_raw", a folder in the working directory 
 library(microperimetr)
 # read the tgz files
-testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
+testdata <- read_maia_tgz(folder = file.path(getwd(), "data-raw"))
 #Interpolate normal values for the plot 
 compare_dat <- compare(testdata)
 ```
@@ -45,12 +45,12 @@ compare_dat <- compare(testdata)
 mpstats(compare_dat)
 ```
 ### Plot bebie curves
-```{r example2, warning=FALSE, message=FALSE, results='hide'}
+```{r example2, warning=FALSE, eval = FALSE, message=FALSE, results='hide'}
 # prepare the data
-field_var <- field_variation(testdat1)
-bebie_stats <- calc_bebie(testdat1, field_var)
+field_var <- field_variation(testdata)
+bebie_stats <- calc_bebie(testdata, field_var)
 ```
-```{r bebie}
+```{r bebie, eval = FALSE}
 plot_bebie(bebie_stats)
 ```
 

@@ -26,7 +26,7 @@ bebie_stats <- calc_bebie(testdat1)
 plot_bebie(bebie_stats)
 }
 \seealso{
-\link[ggplot2:geom_line]{ggplot2::geom_line}
+\link[ggplot2:geom_path]{ggplot2::geom_line}
 
 Other microperimetry plotting functions: 
 \code{\link{plot_bland}()},

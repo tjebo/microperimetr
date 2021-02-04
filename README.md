@@ -15,7 +15,7 @@ It is built for centervue’s maia and compass devices.
     interpolated for location-dependent analysis, any custom grid can be
     used for both types of analysis.
   - microperimetr also includes functions for some more or less common
-    visualistaion of visual field data
+    visualisation of visual field data
 
 ## Examples
 
@@ -29,14 +29,9 @@ data and plot the (estimated) mean deviation for each included test:
 # Here this is "data_raw", a folder in the working directory 
 library(microperimetr)
 # read the tgz files
-testdata <- read_maia(folder = file.path(getwd(), "data-raw"))
+testdata <- read_maia_tgz(folder = file.path(getwd(), "data-raw"))
 #Interpolate normal values for the plot 
 compare_dat <- compare(testdata)
-```
-
-``` r
-field_var <- field_variation(testdat1)
-bebie_stats <- calc_bebie(testdat1, field_var)
 ```
 
 ### Get some basic visual field statistics
@@ -58,6 +53,25 @@ mpstats(compare_dat)
 #> 2996_red         21.54    3.48    -0.30 2.96
 #> 2997_cyan        21.35    4.05     1.49 4.31
 #> 2997_red         21.35    4.05    -0.50 4.02
+#> 3016_mesopic     25.88    4.14     1.33 3.67
+#> 3017_mesopic     25.64    3.68     1.11 3.15
+#> 3018_cyan        19.85    4.48     0.42 3.66
+#> 3018_red         22.35    3.11     0.51 2.67
+#> 3019_cyan        21.02    4.62     1.31 4.33
+#> 3019_red         21.02    4.62    -0.87 4.82
+#> 3024_mesopic     23.94    3.71    -0.59 3.09
+#> 3025_mesopic     24.06    3.68    -0.38 3.02
+#> 3026_cyan        18.56    5.03    -0.57 3.26
+#> 3026_red         22.85    3.43     1.10 2.79
+#> 3027_cyan        20.26    4.86     0.78 4.32
+#> 3027_red         20.26    4.86    -1.51 4.96
+#> 33_mesopic       25.87    3.97    -0.51 3.66
+#> 34_mesopic       25.00    4.03    -1.36 3.79
+#> 35_cyan          10.10    7.19   -11.36 6.17
+#> 35_red           10.38    3.04   -12.95 3.42
+#> 36_cyan           8.75    7.14   -12.73 6.30
+#> 36_red           11.15    3.08   -12.17 3.36
+#> 37_cyan           7.56    6.82   -14.12 6.14
 #> 834_mesopic      26.50    4.24     0.16 3.97
 #> 835_mesopic      28.46    4.73     2.18 4.52
 ```
@@ -65,10 +79,14 @@ mpstats(compare_dat)
 ### Plot bebie curves
 
 ``` r
-plot_bebie(bebie_stats)
+# prepare the data
+field_var <- field_variation(testdata)
+bebie_stats <- calc_bebie(testdata, field_var)
 ```
 
-![](README-bebie-1.png)<!-- -->
+``` r
+plot_bebie(bebie_stats)
+```
 
 ### Plot other visual field statistics
 
