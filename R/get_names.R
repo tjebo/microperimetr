@@ -10,13 +10,10 @@
 #' @return Data frame
 #'
 get_names <- function(folder = getwd()){
-  tgz_name <- file.path(folder, list.files(folder)[grepl(".tgz", list.files(folder))])
-  # check if any tgz file exists
-  if (identical(tgz_name, character(0))) {
-    stop("No tgz file in the specified directory")
-  }
+  tgz_files <- get_tgz_files(folder = folder)
+
   pull_out <- function(tgz_element)  {
-    #tgz_element is element of tgz_name (each tgz file), and pull_out will be used with lapply to perform the whole lot on every tgz file
+    #tgz_element is element of tgz_files (each tgz file), and pull_out will be used with lapply to perform the whole lot on every tgz file
 
     tmpdir <- tempdir()
     patID <- stringr::str_extract(tgz_element, "(?i)(?<=patient)\\d+")
@@ -34,7 +31,7 @@ get_names <- function(folder = getwd()){
 
   }  ##end of pull_out() function to use for list of tgz files
 
-  data_names <- bind_rows(lapply(tgz_name, pull_out)) %>%
+  data_names <- bind_rows(lapply(tgz_files, pull_out)) %>%
     mutate(sex = case_when(sex == 'male' ~ 'm',
                            sex == 'female' ~ 'f',
                            TRUE ~ NA_character_))

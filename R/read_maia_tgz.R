@@ -15,12 +15,12 @@
 #' # read_maia_tgz(folder = file.path(getwd(), "data-raw"))
 #' @export
 
-read_maia_tgz <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetime") {
+read_maia_tgz2 <- function(folder = getwd(), incomplete = FALSE, timeclass = "datetime") {
   # list of tgz files
-  tgz_name <- file.path(folder, list.files(folder)[grepl(".tgz", list.files(folder))])
-  # check if any tgz file exists
+  tgz_name <- get_tgz_files(folder = folder)
+    # check if any tgz file exists
   if (identical(tgz_name, character(0))) {
-    stop("No tgz file in the specified directory")
+    stop("No tgz file in this directory")
   }
   # pull_out will be lapplied on the list of tgz files
   pull_out <- function(tgz_element) { # tgz_element is element of tgz_name (each tgz file)
@@ -40,58 +40,11 @@ read_maia_tgz <- function(folder = getwd(), incomplete = FALSE, timeclass = "dat
       # makes vector of all the xml files with 'projection' but without diff in it
       list_dir_xml <- list_dir_xml[!grepl("diff", list_dir_xml)]
 
-      ## core function to create data frame from xml attributes
-      make_df_each_xml <- function(x) {
-        xmlfile <- xml2::read_xml(paste0(list_dir, "/", x))
-        xml_data <- list(xml2::as_list(xmlfile))[[1]][[1]]
 
-        ## Stimuli extraction - define here what variables you want to pull out from the xml
-        l_stimuli <- lapply(xml_data[[2]], function(x) {
-          c(
-            id = attributes(x)[["id"]],
-            value = attributes(x)[["final_intensity"]],
-            eccent = attributes(x)[["ray"]],
-            angle = attributes(x)[["angle_deg"]]
-          )
-        })
-        # make values positive, except the -1 (absolute scotomas)
-        stimuli_df <- data.frame(t(sapply(l_stimuli, c)),
-                                 row.names = 1:length(l_stimuli),
-                                 stringsAsFactors = FALSE) %>%
-          mutate(id = as.integer(.data$id), value = as.integer(.data$value),
-                 eccent = round(as.numeric(.data$eccent),3),
-                 angle = round(as.numeric(.data$angle),3)) %>%
-          mutate(value = ifelse(.data$value == 1, -1, .data$value * (-1))
-                 )
-
-        ## define here what else you want to pull out from the xml
-        list1 <- list(
-          patID = "PatientID",
-          age = "Age",
-          baseID = "ExamBaselineID",
-          testID = "ExamID",
-          Completed = "Completed",
-          testtype = "ExamType",
-          eye = "Eye",
-          testDate = "DateTime",
-          avg_rctn = "averageReactionTime_ms"
-        )
-
-        l_df <- nrow(stimuli_df)
-        test_attributes <- lapply(list1, function(y) xml_data[[1]][[y]][[1]])
-        attribute_df <- data.frame(t(sapply(test_attributes, c)), stringsAsFactors = FALSE)[rep(1, l_df), ]
-        xml_df <- cbind(attribute_df, stimuli_df)
-        row.names(xml_df) <- NULL
-        # remove incomplete exams if argument is set to FALSE (default)
-        if (incomplete == FALSE) {
-          xml_df <- xml_df %>%
-            filter(.data$Completed == 1) %>%
-            select(-'Completed')
-        }
-      }
       ## end of function to make data frames looping through xml_projection_list
       ## happy loop
-      lapply(list_dir_xml, make_df_each_xml)
+      lapply(list_dir_xml, function(x)
+        make_df_each_xml(x, list_dir = list_dir, incomplete = incomplete))
     } ## end of function loop through tmp_dir
 
     lapply(tmpdir_list, loop_through_tmpdir)
@@ -122,25 +75,25 @@ read_maia_tgz <- function(folder = getwd(), incomplete = FALSE, timeclass = "dat
   data_all <- left_join(data_coll, data_test, by = c("patID", 'baseID' = "testID")) %>%
     mutate(testtype = coalesce(.data$type, .data$testtype),
            eye = if_else(.data$eye == 'Right', 'r', 'l')) %>%
-    select(-"type")
+    dplyr::select(-"type")
 
   if (timeclass == "date") {
     data_all <- data_all %>%
-      mutate(testDate = lubridate::as_date(lubridate::ymd_hm(.data$testDate)))
+      dplyr::mutate(testDate = lubridate::as_date(lubridate::ymd_hm(.data$testDate)))
   } else if (timeclass == "datetime") {
     data_all <- data_all %>%
-      mutate(testDate = lubridate::ymd_hm(.data$testDate))
+      dplyr::mutate(testDate = lubridate::ymd_hm(.data$testDate))
   }
   # use get_names to retrieve sex details of patients. and join with main data frame
   pat_names <- get_names(folder = folder) %>%
-    select('patID', 'sex') %>%
-    mutate(patID = as.character(.data$patID))
+    dplyr::select('patID', 'sex') %>%
+    dplyr::mutate(patID = as.character(.data$patID))
 
   data_bind <-
     data_all %>%
-    left_join(pat_names, by = 'patID') %>%
-    select('patID', 'sex', everything()) %>%
-    mutate(
+    dplyr::left_join(pat_names, by = 'patID') %>%
+    dplyr::select('patID', 'sex', everything()) %>%
+    dplyr::mutate(
       angle = ifelse(.data$eye == 'l', 180- .data$angle, .data$angle),
       angle = ifelse(sign(.data$angle) == -1,
                  360 + .data$angle, .data$angle),
@@ -148,3 +101,69 @@ read_maia_tgz <- function(folder = getwd(), incomplete = FALSE, timeclass = "dat
       )
   data_bind
 }
+
+#' @rdname read_maia_tgz
+#' @description core function to create data frame from xml attributes
+#' @param x name of XML file
+#' @param list_dir directory where to find the xml file
+#' @param incomplete set TRUE, if you want to see incomplete exams too
+#' @return Data frame
+#' @import xml2
+
+
+make_df_each_xml <- function(x, list_dir, incomplete) {
+  xmlfile <- xml2::read_xml(paste0(list_dir, "/", x))
+  xml_data <- list(xml2::as_list(xmlfile))[[1]][[1]]
+
+  ## Stimuli extraction - define here what variables you want to pull out from the xml
+  l_stimuli <- lapply(xml_data[[2]], function(x) {
+    c(
+      id = attributes(x)[["id"]],
+      value = attributes(x)[["final_intensity"]],
+      eccent = attributes(x)[["ray"]],
+      angle = attributes(x)[["angle_deg"]]
+    )
+  })
+  # make values positive, except the -1 (absolute scotomas)
+  stimuli_df <- data.frame(t(sapply(l_stimuli, c)),
+                           row.names = 1:length(l_stimuli),
+                           stringsAsFactors = FALSE) %>%
+    dplyr::mutate(id = as.integer(.data$id), value = as.integer(.data$value),
+           eccent = round(as.numeric(.data$eccent),3),
+           angle = round(as.numeric(.data$angle),3)) %>%
+    dplyr::mutate(value = ifelse(.data$value == 1, -1, .data$value * (-1))
+    )
+
+  ## define here what else you want to pull out from the xml
+  list1 <- list(
+    patID = "PatientID",
+    age = "Age",
+    baseID = "ExamBaselineID",
+    testID = "ExamID",
+    Completed = "Completed",
+    testtype = "ExamType",
+    eye = "Eye",
+    testDate = "DateTime",
+    avg_rctn = "averageReactionTime_ms"
+  )
+
+  l_df <- nrow(stimuli_df)
+  test_attributes <- lapply(list1, function(y) xml_data[[1]][[y]][[1]])
+  attribute_df <- data.frame(t(sapply(test_attributes, c)), stringsAsFactors = FALSE)[rep(1, l_df), ]
+  xml_df <- cbind(attribute_df, stimuli_df)
+  row.names(xml_df) <- NULL
+  # remove incomplete exams if argument is set to FALSE (default)
+  if (incomplete == FALSE) {
+    xml_df <- xml_df %>%
+      filter(.data$Completed == 1) %>%
+      dplyr::select(-'Completed')
+  }
+}
+
+#' @rdname read_maia_tgz
+#' @description ## List TGZ files
+#' @param folder directory to look in
+#'
+get_tgz_files <- function(folder) list.files(path = folder, pattern = ".tgz", full.names = TRUE)
+
+
