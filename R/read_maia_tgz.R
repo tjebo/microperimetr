@@ -16,7 +16,9 @@
 #' @export
 
 ## Function to extract test data from maia files (xml and json)
-read_maia_tgz <- function(folder = getwd(), incomplete = FALSE, timeclass = "date") {
+read_maia_tgz <- function(folder = getwd(),
+                          incomplete = FALSE,
+                          timeclass = "date") {
   # list of tgz files
   tgz_files <- get_tgz_files(folder = folder)
   # creates temporary path just for tgz files for unzipping
@@ -57,7 +59,7 @@ read_maia_tgz <- function(folder = getwd(), incomplete = FALSE, timeclass = "dat
 }
 ## to be moved to testthat
 # test <-
-#   read_maia_tgz2("/Users/tjebo/_temp_projects/microperimetr/backup_maia-1054-patient662_20231012")
+#   read_maia_tgz("/Users/tjebo/_temp_projects/microperimetr/data-raw")
 
 #' clean_mp_data
 #' @description cleaning up extracted data frame with mp test data and PII
