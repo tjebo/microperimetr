@@ -2,22 +2,46 @@
 % Please edit documentation in R/read_maia_tgz.R
 \name{read_maia_tgz}
 \alias{read_maia_tgz}
+\alias{unzip_tgz}
+\alias{extract_pii}
 \title{Read MAIA files}
 \usage{
-read_maia_tgz(folder = getwd(), incomplete = FALSE, timeclass = "datetime")
+read_maia_tgz(folder = getwd(), incomplete = FALSE, timeclass = "date")
+
+unzip_tgz(tgz_file, tmpdir)
+
+extract_pii(x)
 }
 \arguments{
 \item{folder}{source folder which is searched for .tgz files. Default: workdirectory}
 
 \item{incomplete}{set TRUE, if you want to see incomplete exams too}
 
-\item{timeclass}{either 'date' (date class) or 'datetime' (POSIXct class), for date and time of test}
+\item{timeclass}{either 'date' (Date class, default) or 'datetime' (POSIXct), how to provide microperimetry test time}
+
+\item{tgz_file}{file to extract}
+
+\item{tmpdir}{temporary directory}
+
+\item{x}{jsonfile}
 }
 \value{
+Data frame
+
 Data frame
 }
 \description{
 The function will extract the anonymised data from the raw .tgz patient backup files of your MAIA device.
+
+\subsection{unzip tgz files}{
+}
+
+Extracts personally identifiable information from MAIA raw data.
+}
+\details{
+Internal function to extract name, dob and and sex from MAIA observers.
+This data is stored in json files attached to the microperimetry files.
+It is generally not recommended to use this function explicitely in order to keep personal identifiable data as safe as possible.
 }
 \examples{
 # read_maia_tgz(folder = file.path(getwd(), "data-raw"))
@@ -25,3 +49,4 @@ The function will extract the anonymised data from the raw .tgz patient backup f
 \author{
 Tjebo
 }
+\keyword{internal}
