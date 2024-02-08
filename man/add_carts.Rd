@@ -21,10 +21,4 @@ Adding cartesian coordinates to test results
 if not using output from read_maia_tgz, the data frame needs to contain a
 column called "angle" (angle given in radians) and "eccent" (eccentricity given in any unit)
 }
-\examples{
-lm_dat <- lm_loc(testdata = testdat1)
-preddat <- predict_norm(testdat1, list_model = lm_dat)
-testdat_coord <- coord_cart(testdat1)
-interpol_dat <- interpolate_norm(preddat, newgrid = testdat_coord)
-}
 \concept{prediction functions}

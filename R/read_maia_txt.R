@@ -5,8 +5,7 @@
 #' @author Tjebo
 #' @param dir source folder. Default: working directory (check with
 #'   getwd())
-#' @param incomplete set TRUE, if you want to see incomplete exams too
-#' @param timeclass either 'date' (date class) or 'datetime' (POSIXct class), for date and time of test
+#' @importFrom readr read_tsv
 #' @return Data frame
 #' @examples
 #' # read_maia_txt()

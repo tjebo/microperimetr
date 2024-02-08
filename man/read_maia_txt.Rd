@@ -9,10 +9,6 @@ read_maia_txt(dir = getwd())
 \arguments{
 \item{dir}{source folder. Default: working directory (check with
 getwd())}
-
-\item{incomplete}{set TRUE, if you want to see incomplete exams too}
-
-\item{timeclass}{either 'date' (date class) or 'datetime' (POSIXct class), for date and time of test}
 }
 \value{
 Data frame

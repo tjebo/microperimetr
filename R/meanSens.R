@@ -8,7 +8,6 @@
 #' @param na.rm TRUE (default): NA will be ignored. False: will return NA
 #' @param digits round to how many digits.
 #' @return if global = TRUE: vector of MS and SD, else dataframe (or: tibble)
-#' @examples
 #' @export
 
 meanSens <- function(data, global = FALSE, na.rm = TRUE, digits){

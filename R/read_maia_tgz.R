@@ -1,7 +1,7 @@
 #' Read MAIA files
 #' @name read_maia_tgz
 #' @description
-#' The function will extract the anonymised data from the raw .tgz patient backup files of your MAIA device.
+#' The function will extract the data from the raw .tgz patient backup files of your MAIA device.
 #' @author Tjebo
 #'
 #' @param folder source folder which is searched for .tgz files. Default: workdirectory
@@ -65,13 +65,9 @@ read_maia_tgz <- function(folder = getwd(),
 #' @description cleaning up extracted data frame with mp test data and PII
 #' @param x data frame
 #' @param timeclass either 'date' (default) or 'datetime' (POSIXct)
-#' @param incomplete set TRUE, if you want to see incomplete exams too
 #' @return Data frame
 #' @import xml2
 #'
-# lookup vector for test type
-lu_test_type <- c(`0` = "mesopic", `1` = "mesopic", `6` = "cyan", `7` = "red")
-
 clean_mp_data <- function(x, timeclass){
   clean_type <- x %>%
   dplyr::mutate(
@@ -122,6 +118,7 @@ clean_mp_data <- function(x, timeclass){
   return(clean_angle)
   }
 
+#' extract xml data
 #' @description core function to create data frame from xml attributes
 #' @param x name of XML file
 #' @param incomplete set TRUE, if you want to see incomplete exams too
@@ -196,7 +193,8 @@ make_df_each_xml <- function(x, incomplete) {
 #   make_df_each_xml("/Users/tjebo/_temp_projects/microperimetr/data-raw/backup_maia-1054-patient180_20190401/180/835/projection.xml", incomplete = FALSE)
 # str(test_xml)
 
-#' @description ## List TGZ files
+#' find tgz files
+#' @description Lists TGZ files
 #' @param folder directory to look in
 #' @keywords internal
 #'
@@ -209,8 +207,8 @@ get_tgz_files <- function(folder) {
   tgz_files
 }
 
-#' @rdname read_maia_tgz
-#' @description ## unzip tgz files
+#' unzips tgz files
+#' @description unzips tgz files
 #' @param tgz_file file to extract
 #' @param tmpdir temporary directory
 #'
@@ -223,7 +221,7 @@ unzip_tgz <- function(tgz_file, tmpdir) { # tgz_file is element of tgz_files (ea
   tmpdir_patID <- paste0(tmpdir, "/", patID)
 }
 
-#' @rdname  read_maia_tgz
+#' extracts PII
 #' @description Extracts personally identifiable information from MAIA raw data.
 #' @details
 #' Internal function to extract name, dob and and sex from MAIA observers.
