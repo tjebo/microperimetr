@@ -17,12 +17,12 @@ knitr::opts_chunk$set(
 # microperimetr
 
 This package will help you work with microperimetry data.  
-It is built for centervue's maia and compass devices. 
+It is built for centervue's maia and compass devices. (note: currently only for maia device!)
 
 ## Features
-- Extracting data from MAIA raw (tgz) files becomes as easy as pie.
-- Fully automated comparison of your visual field data with normdata from the literature. 
-- microperimetr has functions for both location-dependent and location-independent visual field analysis. Because the normdata is interpolated for location-dependent analysis, any custom grid can be used for both types of analysis. 
+- Extracting data from maia raw (tgz) files becomes as easy as pie.
+- contains normdata from literature. 
+- microperimetr (will) work hand in hand with the perimetry package that will have functions for both location-dependent and location-independent visual field analysis. Because the normdata is interpolated for location-dependent analysis, any custom grid can be used for both types of analysis. 
 - microperimetr also includes functions for some more or less common visualisation of visual field data
 
 ## Examples
@@ -30,39 +30,16 @@ It is built for centervue's maia and compass devices.
 This is a basic example which shows you how to import your visual field data and plot the (estimated) mean deviation for each included test:
 
 ### Load sample visual field data in a breeze
-```{r example1, warning=FALSE, message=FALSE, results='hide'}
+```
 # save the tgz files from MAIA patient backup into any directory, 
 # Here this is "data_raw", a folder in the working directory 
 library(microperimetr)
 # read the tgz files
-testdata <- read_maia_tgz(folder = file.path(getwd(), "data-raw"))
-#Interpolate normal values for the plot 
-compare_dat <- compare(testdata)
-```
-### Get some basic visual field statistics
-```{r mpstats, warning=FALSE, message=FALSE}
-# Visual fields statistics arranged nicely in a data frame
-mpstats(compare_dat)
-```
-### Plot bebie curves
-```{r example2, warning=FALSE, eval = FALSE, message=FALSE, results='hide'}
-# prepare the data
-field_var <- field_variation(testdata)
-bebie_stats <- calc_bebie(testdata, field_var)
-```
-```{r bebie, eval = FALSE}
-plot_bebie(bebie_stats)
-```
-
-### Plot other visual field statistics
-```{r plot_mpstats, warning=FALSE, message=FALSE}
-# Plotting mean sensitivity, mean deviation and pattern standard deviation
-# Shows the visual field statistics in relation to normal percentiles. 
-plot_mpstats(compare_dat)
+testdata <- read_maia_tgz()
 ```
 
 ## Installation 
-```{r, eval=FALSE}
+```
 # for the development version 
 devtools::install_github(tjebo/microperimetr)
 ```

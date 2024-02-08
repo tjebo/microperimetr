@@ -5,7 +5,7 @@ Version: 0.0.0.9000
 Authors@R: c(
     person("Tjebo", "Heeren", email = "tjebn@web.de", role = c("aut", "cre")),
     person("Maximilian", "Pfau", role = c("ctb")))
-Maintainer: Tjebo Heeren <tjebn@web.de>
+Maintainer: Tjebo Heeren <tjebo@gmx.de>
 Description: For analysis of centervue's maia microperimetry data. Read in raw exported files 
     (tgz format) and txt exports. Has ggplot extension geom to plot microperimetry results on 
     x/y coordinate system. 
