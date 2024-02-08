@@ -6,27 +6,24 @@ Authors@R: c(
     person("Tjebo", "Heeren", email = "tjebn@web.de", role = c("aut", "cre")),
     person("Maximilian", "Pfau", role = c("ctb")))
 Maintainer: Tjebo Heeren <tjebn@web.de>
-Description: This package will help you work with microperimetry data.  
-    It is built for centervue's maia and compass devices. 
-    Extracting data from MAIA raw (tgz) files becomes as easy as pie.
-    Fully automated comparison of your visual field data with normdata from the literature. 
-    microperimetr has functions for both location-dependent and location-independent visual field analysis. Because the normdata is interpolated for location-dependent analysis, any custom grid can be used for both types of analysis. 
-    microperimetr also includes functions for some more or less common visualistaion of visual field data.
+Description: For analysis of centervue's maia microperimetry data. Read in raw exported files 
+    (tgz format) and txt exports. Has ggplot extension geom to plot microperimetry results on 
+    x/y coordinate system. 
 Imports: 
-    dplyr (>= 0.8.5),
-    ggplot2 (>= 3.3.0),
-    gstat (>= 2.0-4),
-    jsonlite (>= 1.6.1), 
-    lubridate (>= 1.7.4),
-    magrittr (>= 1.5),
-    patchwork (>= 1.0.0),
-    rlang (>= 0.4.5),
-    sp (>= 1.4-1), 
-    stringr (>= 1.4.0),
-    tibble (>= 2.1.3),
-    tidyr (>= 1.0.2),
-    xml2 (>= 1.2.5),
-Depends: R (>= 3.6.0)
+    dplyr (>= 1.1.4),
+    ggplot2 (>= 3.4.4),
+    gstat (>= 2.1-1),
+    jsonlite (>= 1.8.8),
+    lubridate (>= 1.9.3),
+    magrittr (>= 2.0.3),
+    patchwork (>= 1.2.0),
+    rlang (>= 1.1.3),
+    sp (>= 2.1-3),
+    stringr (>= 1.5.1),
+    tibble (>= 3.2.1),
+    tidyr (>= 1.3.1),
+    xml2 (>= 1.3.6)
+Depends: R (>= 4.3.2)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
